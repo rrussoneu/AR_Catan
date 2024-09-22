@@ -39,6 +39,10 @@ add_executable(AR_Settlers main.cpp
         AR_Objs/Aruco/ResCards/ResourceCard.h
         AR_Objs/Aruco/DevCards/DevelopmentCard.h
         AR_Objs/Aruco/Tiles/HexTile.h
+        AR_Objs/Aruco/GamePieces/NonPlayerPieces/Robber.h
+        AR_Objs/Aruco/GamePieces/PlayerPieces/City.h
+        AR_Objs/Aruco/GamePieces/PlayerPieces/Settlement.h
+        AR_Objs/Aruco/GamePieces/PlayerPieces/Road.h
 )
 
 target_link_libraries(AR_Settlers
