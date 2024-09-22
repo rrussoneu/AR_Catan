@@ -1,0 +1,133 @@
+# Ignore build directories
+cmake-build-debug/
+cmake-build-release/
+build/
+CMakeFiles/
+CMakeCache.txt
+Makefile
+cmake_install.cmake
+compile_commands.json
+Testing/
+CTestTestfile.cmake
+CMakeScripts/
+*.cmake
+*.cbp
+*.swp
+
+# Qt specific
+*.qmake.stash
+*.qmake.cache
+ui_*.h
+moc_*.cpp
+qrc_*.cpp
+
+# CLion specific
+.idea/
+.idea_modules/
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/gradle.xml
+.idea/dictionaries
+.idea/cmake.xml
+.idea/vcs.xml
+.idea/.name
+.idea/modules.xml
+.idea/misc.xml
+.idea/runConfigurations/
+*.iml
+.idea/target/
+
+# MacOS specific
+.DS_Store
+*.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+
+# Thumbnails
+._*
+
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashes
+VolumeIcon.icns
+.metadata_never_index
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# SQLite database file
+*.sqlite3
+
+# Logs
+*.log
+
+# Qt Creator specific
+*.pro.user
+*.pro.user.*
+*.creator.user
+*.creator.user.*
+*.creator.cmake
+*.creator.shared
+
+# Compiled object files, binaries, and libraries
+*.obj
+*.o
+*.so
+*.dylib
+*.dll
+*.exe
+*.out
+
+# Debug files
+*.gch
+*.pch
+*.pdb
+*.mod
+*.dSYM/
+*.ncb
+*.sdf
+*.sqlite-wal
+*.sqlite-shm
+*.pyc
+*.pyo
+*.class
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+*~
+
+# Qt resource and moc output files
+qrc_*.cpp
+moc_*.cpp
+moc_*.h
+ui_*.h
+
+# GTest and other testing related files
+*.gcno
+*.gcda
+*.gcov
+
+# Caches
+*.cache
+
+# Backup files
+*.bak
+*.old
+*.orig
+
+# CPack related files
+CPack*.zip
+CPack*.tar.gz
+CPack*.tar.xz
+CPack*.tar.bz2
+CPack*.tar
+CPack*.deb
+CPack*.rpm
+CPackConfig.cmake
+CPackSourceConfig.cmake
