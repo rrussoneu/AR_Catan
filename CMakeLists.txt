@@ -22,7 +22,14 @@ include_directories(
         ${SQLite3_INCLUDE_DIRS}
 )
 
-add_executable(AR_Settlers main.cpp)
+add_executable(AR_Settlers main.cpp
+        Video/VideoInput.h
+        Video/CameraInput.h
+        Video/VideoCaptureThread.h
+        View/GUIView.cpp
+        View/GUIView.h
+        Video/RTSPInput.h
+)
 
 target_link_libraries(AR_Settlers
         Qt6::Widgets
