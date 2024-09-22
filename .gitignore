@@ -1,3 +1,5 @@
+dependencytest.cpp
+
 # Ignore build directories
 cmake-build-debug/
 cmake-build-release/
