@@ -2,27 +2,15 @@
 // Created by Raphael Russo on 9/22/24.
 //
 
-#include "Video/CameraInput.h"
-#include <opencv2/highgui.hpp>
+#include <QApplication>
+#include "View/GUIView.h"
 
-int main() {
+int main(int argc, char *argv[]) {
+    QApplication app(argc, argv);  // Initialize the Qt application
 
-    CameraInput cameraInput;
-    if (!cameraInput.startStream()) {
-        std::cerr << "Failed to start camera input" << std::endl;
-        return -1;
-    }
-    cv::Mat frame;
-    while (true) {
-        if (cameraInput.getFrame(frame)) {
-            cv::imshow("Camera Feed", frame);
-        }
+    GUIView window;  // Create the main window (includes camera feed and buttons)
+    window.resize(800, 600);  // Set the initial size of the window
+    window.show();  // Show the window
 
-        if (cv::waitKey(30) == 27) {  // Exit on esc
-            break;
-        }
-    }
-
-    cameraInput.stopStream();
-    return 0;
+    return app.exec();  // Start the Qt event loop
 }

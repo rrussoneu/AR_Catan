@@ -25,7 +25,11 @@ include_directories(
 add_executable(AR_Settlers main.cpp
         Video/VideoInput.h
         Video/CameraInput.h
-        main.cpp)
+        Video/VideoCaptureThread.h
+        View/GUIView.cpp
+        View/GUIView.h
+        Video/RTSPInput.h
+)
 
 target_link_libraries(AR_Settlers
         Qt6::Widgets

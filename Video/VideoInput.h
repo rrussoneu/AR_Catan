@@ -16,7 +16,7 @@ public:
     // Starts video capture, returns true if successful
     virtual bool startStream() = 0;
 
-    // Stops video capture, returns true if successful
+    // Stops video capture
     virtual void stopStream() = 0;
 
     // Gets frame
