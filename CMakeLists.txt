@@ -29,6 +29,16 @@ add_executable(AR_Settlers main.cpp
         View/GUIView.cpp
         View/GUIView.h
         Video/RTSPInput.h
+        AR_Objs/ARObject.h
+        AR_Objs/Aruco/ArucoObject.h
+        AR_Objs/NonAruco/NonArucoObject.h
+        AR_Objs/Aruco/HomographyObj.h
+        AR_Objs/Aruco/GamePieces/GamePiece.h
+        AR_Objs/Aruco/GamePieces/PlayerPieces/PlayerPiece.h
+        AR_Objs/Aruco/GamePieces/NonPlayerPieces/NonPlayerPiece.h
+        AR_Objs/Aruco/ResCards/ResourceCard.h
+        AR_Objs/Aruco/DevCards/DevelopmentCard.h
+        AR_Objs/Aruco/Tiles/HexTile.h
 )
 
 target_link_libraries(AR_Settlers
