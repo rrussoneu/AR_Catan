@@ -2,7 +2,7 @@
 // Created by Raphael Russo on 9/22/24.
 // Util code for initializing AR Objects
 //
-#include "GameModel.h"
+#include "InitARObjects.h"
 
 #include "../AR_Objs/Aruco/DevCards/KnightCard.h"
 #include "../AR_Objs/Aruco/DevCards/MonopolyCard.h"
@@ -29,7 +29,7 @@
 
 
 
-void initGameObjs(GameModel &model) {
+void initARObjects(GameModel &model) {
     KnightCard::registerKnightCard();
     MonopolyCard::registerMonopolyCard();
     RoadBuildingCard::registerRoadBuildingCard();

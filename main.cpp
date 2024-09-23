@@ -4,13 +4,21 @@
 
 #include <QApplication>
 #include "View/GUIView.h"
+#include "Model/GameModel.h"
+#include "Controller/Controller.h"
+#include "Model/InitARObjects.h"
+
 
 int main(int argc, char *argv[]) {
-    QApplication app(argc, argv);  // Initialize the Qt application
+    QApplication app(argc, argv);
 
-    GUIView window;  // Create the main window (includes camera feed and buttons)
-    window.resize(800, 600);  // Set the initial size of the window
-    window.show();  // Show the window
+    GameModel model;
+    initARObjects(model);
 
-    return app.exec();  // Start the Qt event loop
+    Controller controller(&model);
+
+    GUIView guiView(&controller);
+    guiView.show();
+
+    return app.exec();
 }
