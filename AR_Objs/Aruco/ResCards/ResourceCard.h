@@ -8,7 +8,7 @@
 #pragma once
 #include "../ArucoObject.h"
 
-class ResourceCard : ArucoObject {
+class ResourceCard : public ArucoObject {
 public:
     ResourceCard(int markerID) : ArucoObject(markerID) {}
 };
