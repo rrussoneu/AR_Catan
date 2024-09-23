@@ -63,6 +63,8 @@ add_executable(AR_Settlers main.cpp
         Controller/Controller.cpp
         Controller/Controller.h
         Model/InitARObjects.h
+        Controller/Processing/ProcessingThread.cpp
+        Controller/Processing/ProcessingThread.h
 )
 
 target_link_libraries(AR_Settlers
