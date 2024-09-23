@@ -16,6 +16,12 @@ public:
     }
 
 protected:
-    std::string color; // Red, blue, orange, white
+    std::string color; // red, blue, orange, white
+    cv::Scalar getColorScalar() const {
+        if (color == "red") return cv::Scalar(0,0,255);
+        if (color == "blue") return cv::Scalar(255,0,0);
+        if (color == "orange") return cv::Scalar(0,160,255);
+        return cv::Scalar(255,255,255);
+    }
 };
 #endif //AR_SETTLERS_PLAYERPIECE_H
