@@ -31,7 +31,6 @@ add_executable(AR_Settlers main.cpp
         Video/RTSPInput.h
         AR_Objs/ARObject.h
         AR_Objs/Aruco/ArucoObject.h
-        AR_Objs/NonAruco/NonArucoObject.h
         AR_Objs/Aruco/HomographyObj.h
         AR_Objs/Aruco/GamePieces/GamePiece.h
         AR_Objs/Aruco/GamePieces/PlayerPieces/PlayerPiece.h
@@ -43,6 +42,24 @@ add_executable(AR_Settlers main.cpp
         AR_Objs/Aruco/GamePieces/PlayerPieces/City.h
         AR_Objs/Aruco/GamePieces/PlayerPieces/Settlement.h
         AR_Objs/Aruco/GamePieces/PlayerPieces/Road.h
+        AR_Objs/ARObjectFactory.h
+        Model/GameModel.h
+        Model/InitARObjects.cpp
+        AR_Objs/Aruco/DevCards/KnightCard.h
+        AR_Objs/Aruco/DevCards/MonopolyCard.h
+        AR_Objs/Aruco/DevCards/YearOfPlentyCard.h
+        AR_Objs/Aruco/DevCards/RoadBuilding.h
+        AR_Objs/Aruco/DevCards/VictoryPointCard.h
+        AR_Objs/Aruco/ResCards/WoodResCard.h
+        AR_Objs/Aruco/ResCards/BrickResCard.h
+        AR_Objs/Aruco/ResCards/OreResCard.h
+        AR_Objs/Aruco/ResCards/WheatResCard.h
+        AR_Objs/Aruco/ResCards/WoolResCard.h
+        AR_Objs/Aruco/Tiles/WoodHex.h
+        AR_Objs/Aruco/Tiles/BrickHex.h
+        AR_Objs/Aruco/Tiles/OreHex.h
+        AR_Objs/Aruco/Tiles/WheatHex.h
+        AR_Objs/Aruco/Tiles/WoolHex.h
 )
 
 target_link_libraries(AR_Settlers
