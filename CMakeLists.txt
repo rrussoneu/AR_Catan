@@ -23,12 +23,12 @@ include_directories(
 )
 
 add_executable(AR_Settlers main.cpp
-        Video/VideoInput.h
-        Video/CameraInput.h
-        Video/VideoCaptureThread.h
+        Controller/Video/VideoInput.h
+        Controller/Video/CameraInput.h
+        Controller/Video/VideoCaptureThread.h
         View/GUIView.cpp
         View/GUIView.h
-        Video/RTSPInput.h
+        Controller/Video/RTSPInput.h
         AR_Objs/ARObject.h
         AR_Objs/Aruco/ArucoObject.h
         AR_Objs/Aruco/HomographyObj.h
@@ -60,6 +60,9 @@ add_executable(AR_Settlers main.cpp
         AR_Objs/Aruco/Tiles/OreHex.h
         AR_Objs/Aruco/Tiles/WheatHex.h
         AR_Objs/Aruco/Tiles/WoolHex.h
+        Controller/Controller.cpp
+        Controller/Controller.h
+        Model/InitARObjects.h
 )
 
 target_link_libraries(AR_Settlers
