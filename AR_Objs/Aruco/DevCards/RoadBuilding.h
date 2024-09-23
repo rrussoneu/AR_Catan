@@ -9,21 +9,21 @@
 #include "../../ARObjectFactory.h"
 
 // Add later: public HomographyObj
-class RoadBuilding : public DevelopmentCard {
+class RoadBuildingCard : public DevelopmentCard {
 public:
-    RoadBuilding(int markerID) : DevelopmentCard(markerID) {}
+    RoadBuildingCard(int markerID) : DevelopmentCard(markerID) {}
 
     void render(cv::Mat& frame) override {
 
     }
 
     static ARObject* create(int markerID) {
-        return new RoadBuilding(markerID);
+        return new RoadBuildingCard(markerID);
     }
 
     static void registerRoadBuildingCard() {
         for (int markerID = 118; markerID <= 119; ++markerID) {
-            ARObjectFactory::registerFactory(markerID, RoadBuilding::create);
+            ARObjectFactory::registerFactory(markerID, RoadBuildingCard::create);
         }
     }
 

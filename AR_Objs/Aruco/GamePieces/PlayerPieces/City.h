@@ -20,7 +20,7 @@ public:
         return nullptr;
     }
 
-    static void registerRoad() {
+    static void registerCity() {
         for (int markerID = 81; markerID <= 96; ++markerID) {
             ARObjectFactory::registerFactory(markerID, City::create);
         }
