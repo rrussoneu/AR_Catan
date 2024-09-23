@@ -9,6 +9,7 @@
 #include "../ArucoObject.h"
 
 class HexTile : public ArucoObject {
+public:
     HexTile(int markerID) : ArucoObject(markerID) {}
 };
 #endif //AR_SETTLERS_HEXTILE_H
