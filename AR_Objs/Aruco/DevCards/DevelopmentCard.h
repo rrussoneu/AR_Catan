@@ -8,11 +8,11 @@
 
 #pragma once
 #include "../ArucoObject.h"
-#include "../HomographyObj.h"
 
 // Add later: public HomographyObj
 class DevelopmentCard : public ArucoObject {
-
+public:
+    DevelopmentCard(int markerID) : ArucoObject(markerID) {}
 };
 
 #endif //AR_SETTLERS_DEVELOPMENTCARD_H
