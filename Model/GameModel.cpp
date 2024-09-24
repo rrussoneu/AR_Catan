@@ -16,3 +16,14 @@ Player* GameModel::getPlayer(const std::string &color) {
     }
     return nullptr;
 }
+
+int GameModel::rollDice() {
+    // Seed random number generator
+    static bool seeded = false;
+    if (!seeded) {
+        std::srand(static_cast<unsigned int>(std::time(nullptr)));
+        seeded = true;
+    }
+    // 2 to 12
+    return (std::rand() % 11) + 2;
+}

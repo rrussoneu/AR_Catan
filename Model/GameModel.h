@@ -26,6 +26,7 @@ public:
     void addPlayer(const Player &player);
     Player *getPlayer(const std::string &color);
 
+    int rollDice();
 
 private:
     std::unordered_map<int, ARObject*> objectMap;
