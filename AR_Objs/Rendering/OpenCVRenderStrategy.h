@@ -23,10 +23,12 @@ public:
         std::vector<std::vector<cv::Point3f>> polys = object->getPolygons();
         for (int i = 0; i < polys.size(); ++i) {
             cv::projectPoints(polys.at(i), rvec, tvec, cameraMatrix, distCoeffs, imgPoints); // Solve
+            cv::Scalar color = object->getColors().at(i);
             for (int j = 0; j < polys.at(i).size() - 1; ++j) {
-                cv::line(frame, imgPoints.at(j), imgPoints.at(j + 1), object->getColors().at(i), 30);
-                cv::line(frame, imgPoints.at(imgPoints.size() - 1), imgPoints.at(0), object->getColors().at(i), 30);
+                cv::line(frame, imgPoints.at(j), imgPoints.at(j + 1), color, 20);
+
             }
+            cv::line(frame, imgPoints.at(imgPoints.size() - 1), imgPoints.at(0), color, 20);
         }
 
 

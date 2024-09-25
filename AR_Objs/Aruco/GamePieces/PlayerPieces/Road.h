@@ -12,9 +12,14 @@
 class Road : public PlayerPiece {
 public:
     Road(int markerID, const std::string &color) : PlayerPiece(markerID, color) {
-        std::vector<cv::Point3f> road_points = {cv::Point3f(-0.02, 0.0, 0.01), cv::Point3f(.02, 0.0, 0.01)};
+        //std::vector<cv::Point3f> road_points = {cv::Point3f(-0.02, 0.0, 0.01), cv::Point3f(.02, 0.0, 0.01)};
+        std::vector<cv::Point3f> road_points = {cv::Point3f(-0.5, 0.0, 0.5), cv::Point3f(.5, 0.0, 0.5)};
+
         polygons.push_back(road_points);
+        scalePoints(&polygons);
+
         colors.push_back(getColorScalar());
+        //scalePoints();
     }
 
     static ArucoObject* create(int markerID) {

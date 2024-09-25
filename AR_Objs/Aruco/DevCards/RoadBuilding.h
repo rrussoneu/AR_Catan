@@ -11,10 +11,30 @@
 // Add later: public HomographyObj
 class RoadBuildingCard : public DevelopmentCard {
 public:
-    RoadBuildingCard(int markerID) : DevelopmentCard(markerID) {}
+    RoadBuildingCard(int markerID) : DevelopmentCard(markerID, &OpenCVRenderStrategy::getInstance()) {
+        std::vector<cv::Point3f> metalBottom = {
+                cv::Point3f(0.0f, 0.0f, 0.0f),          // Tip
+                cv::Point3f(-0.25f, 0.0f, 0.2f),      // Bottom left
+                cv::Point3f(-0.25f, 0.0f, 0.45f),       // Bottom right
+                cv::Point3f(0.25f, 0.0f, 0.45f),          // Top left
+                cv::Point3f(0.25f, 0.0f, 0.2f),           // Top right
+        };
+        std::vector<cv::Point3f> handleVertical {
+                cv::Point3f(0.0f, 0.0f, 0.45f),           // Start of handle
+                cv::Point3f(0.0f, 0.0f, 0.8f),           // Top of handle
+        };
+        std::vector<cv::Point3f> handleHorizontal {
+                cv::Point3f(-0.2f, 0.0f, 0.8f),          // Top left handle
+                cv::Point3f(0.2f, 0.0f, 0.8f)            // Top right handle
+        };
+        polygons.push_back(metalBottom);
+        polygons.push_back(handleVertical);
+        polygons.push_back(handleHorizontal);
+        scalePoints(&polygons);
+        colors.push_back(cv::Scalar(60,74,178));
+        colors.push_back(cv::Scalar(20,70,140));
+        colors.push_back(cv::Scalar(20,70,140));
 
-    void render(cv::Mat &frame, const std::vector<cv::Point2f> &markerCorners, const cv::Vec3d &rvec, const cv::Vec3d &tvec, const std::vector<double> &distCoeffs, const cv::Mat &cameraMatrix) override {
-        // Add logic
     }
 
     static ArucoObject* create(int markerID) {
@@ -28,16 +48,14 @@ public:
     }
 
     const std::vector<std::vector<cv::Point3f>>& getPolygons() const override {
-        // Return empty or default value
-        static std::vector<std::vector<cv::Point3f>> emptyPolygons;
-        return emptyPolygons;
+        return polygons;
     }
 
     const std::vector<cv::Scalar>& getColors() const override {
-        // Return empty or default value
-        static std::vector<cv::Scalar> emptyColors;
-        return emptyColors;
+        return colors;
     }
-
+private:
+    std::vector<std::vector<cv::Point3f>> polygons;
+    std::vector<cv::Scalar> colors;
 };
 #endif //AR_SETTLERS_ROADBUILDING_H

@@ -10,7 +10,30 @@
 // Add later: public HomographyObj
 class VictoryPointCard : public DevelopmentCard {
 public:
-    VictoryPointCard(int markerID) : DevelopmentCard(markerID) {}
+    VictoryPointCard(int markerID) : DevelopmentCard(markerID, &OpenCVRenderStrategy::getInstance()) {
+        std::vector<cv::Point3f> frontMain = {cv::Point3f(-0.25f, 0.5f, 0.0f), cv::Point3f(-0.25f, 0.5f, 0.5f), cv::Point3f(0.25f, 0.5f, 0.5f), cv::Point3f(0.25f, 0.5f, 0.0f)};
+        std::vector<cv::Point3f> frontLeft = {cv::Point3f(-0.25f, 0.5f, 0.0f), cv::Point3f(-0.25f, 0.5f, 0.25f), cv::Point3f(-0.5f, 0.25f, 0.25f), cv::Point3f(-0.5f, 0.25f, 0.0f)};
+        std::vector<cv::Point3f> frontRight = {cv::Point3f(0.25f, 0.5f, 0.0f), cv::Point3f(0.25f, 0.5f, 0.25f), cv::Point3f(0.5f, 0.25f, 0.25f), cv::Point3f(0.5f, 0.25f, 0.0f)};
+        std::vector<cv::Point3f> leftMain = {cv::Point3f(-0.5f, 0.25f, 0.0f), cv::Point3f(-0.5f, 0.25f, 0.5f), cv::Point3f(-0.5f, -0.25f, 0.5f), cv::Point3f(-0.5f, -0.25f, 0.0f)};
+        std::vector<cv::Point3f> rightMain = {cv::Point3f(0.5f, 0.25f, 0.0f), cv::Point3f(0.5f, 0.25f, 0.5f), cv::Point3f(0.5f, -0.25f, 0.5f), cv::Point3f(0.5f, -0.25f, 0.0f)};
+        std::vector<cv::Point3f> backLeft = {cv::Point3f(-0.25f, -0.5f, 0.0f), cv::Point3f(-0.25f, -0.5f, 0.25f), cv::Point3f(-0.5f, -0.25f, 0.25f), cv::Point3f(-0.5f, -0.25f, 0.0f)};
+        std::vector<cv::Point3f> backRight = {cv::Point3f(0.25f, -0.5f, 0.0f), cv::Point3f(0.25f, -0.5f, 0.25f), cv::Point3f(0.5f, -0.25f, 0.25f), cv::Point3f(0.5f, -0.25f, 0.0f)};
+        std::vector<cv::Point3f> backMain = {cv::Point3f(-0.25f, -0.5f, 0.0f), cv::Point3f(-0.25f, -0.5f, 0.5f), cv::Point3f(0.25f, -0.5f, 0.5f), cv::Point3f(0.25f, -0.5f, 0.0f)};
+
+        polygons.push_back(frontMain);
+        polygons.push_back(frontLeft);
+        polygons.push_back(frontRight);
+        polygons.push_back(leftMain);
+        polygons.push_back(rightMain);
+        polygons.push_back(backLeft);
+        polygons.push_back(backRight);
+        polygons.push_back(backMain);
+
+        scalePoints(&polygons);
+        for (int i = 0; i < polygons.size(); ++i) {
+            colors.push_back(cv::Scalar(50,170,210));
+        }
+    }
 
 
 
@@ -25,16 +48,14 @@ public:
     }
 
     const std::vector<std::vector<cv::Point3f>>& getPolygons() const override {
-        // Return empty or default value
-        static std::vector<std::vector<cv::Point3f>> emptyPolygons;
-        return emptyPolygons;
+        return polygons;
     }
 
     const std::vector<cv::Scalar>& getColors() const override {
-        // Return empty or default value
-        static std::vector<cv::Scalar> emptyColors;
-        return emptyColors;
+        return colors;
     }
-
+private:
+    std::vector<std::vector<cv::Point3f>> polygons;
+    std::vector<cv::Scalar> colors;
 };
 #endif //AR_SETTLERS_VICTORYPOINTCARD_H
