@@ -3,11 +3,12 @@
 //
 
 #include "ProcessingThread.h"
+#include "../../Config.h"
 
 #include <opencv2/aruco.hpp>
 
 ProcessingThread::ProcessingThread(GameModel *model, QObject *parent) : QThread(parent), model(model), stopThread(false),
-        dictionary(cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_1000)), detectorParams(cv::aruco::DetectorParameters()),
+        dictionary(cv::aruco::getPredefinedDictionary(cv::aruco::DICT_4X4_1000)), detectorParams(cv::aruco::DetectorParameters()),
         detector(dictionary, detectorParams){
 
         try {
@@ -68,6 +69,7 @@ void ProcessingThread::processFrame(const cv::Mat &frame) {
     std::vector<std::vector<cv::Point2f>> rejectedCandidates;
 
     detector.detectMarkers(processedFrame, markerCorners, markerIDs, rejectedCandidates);
+    /*
     cv::Mat obj_points(4, 1, CV_32FC3);
     float marker_length = .027; // measured on printed markers
     obj_points.ptr<cv::Vec3f>(0)[0] = cv::Vec3f(-marker_length/2.f, marker_length/2.f, 0);
@@ -75,16 +77,18 @@ void ProcessingThread::processFrame(const cv::Mat &frame) {
     obj_points.ptr<cv::Vec3f>(0)[2] = cv::Vec3f(marker_length/2.f, -marker_length/2.f, 0);
     obj_points.ptr<cv::Vec3f>(0)[3] = cv::Vec3f(-marker_length/2.f, -marker_length/2.f, 0);
 
+    */
 
-    std::vector<cv::Vec3d> rvecs(markerCorners.size()), tvecs(markerCorners.size()); // rotation, translation vectors
 
 
     // Render objects based on the markers detected
     if (!markerIDs.empty()) {
+
         cv::aruco::drawDetectedMarkers(processedFrame, markerCorners, markerIDs);
 
+        std::vector<cv::Vec3d> rvecs(markerCorners.size()), tvecs(markerCorners.size()); // rotation, translation vectors
         cv::Mat obj_points(4, 1, CV_32FC3);
-        float marker_length = .027; // Measured on printed markers
+        float marker_length = Config::getInstance().getMarkerLength();
         obj_points.ptr<cv::Vec3f>(0)[0] = cv::Vec3f(-marker_length/2.f, marker_length/2.f, 0);
         obj_points.ptr<cv::Vec3f>(0)[1] = cv::Vec3f(marker_length/2.f, marker_length/2.f, 0);
         obj_points.ptr<cv::Vec3f>(0)[2] = cv::Vec3f(marker_length/2.f, -marker_length/2.f, 0);
