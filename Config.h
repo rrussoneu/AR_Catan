@@ -34,16 +34,6 @@ public:
     }
 
 
-    void setCameraMatrix(const cv::Mat &matrix) {
-        std::lock_guard<std::mutex> lock(configMutex);
-        cameraMatrix = matrix.clone();
-    }
-
-    cv::Mat getCameraMatrix() const {
-        std::lock_guard<std::mutex> lock(configMutex);
-        return cameraMatrix.clone();
-    }
-
 
 
 private:
@@ -52,8 +42,7 @@ private:
 
 
     float markerLength;
-    cv::Mat cameraMatrix;
-    cv::Mat distCoeffs;
+
 
     mutable std::mutex configMutex;
 };
