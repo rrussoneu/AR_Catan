@@ -12,7 +12,7 @@
 // Add later: public HomographyObj
 class DevelopmentCard : public ArucoObject {
 public:
-    DevelopmentCard(int markerID) : ArucoObject(markerID) {}
+    DevelopmentCard(int markerID, RenderStrategy *renderStrategy = nullptr) : ArucoObject(markerID, renderStrategy) {}
 };
 
 #endif //AR_SETTLERS_DEVELOPMENTCARD_H

@@ -7,6 +7,7 @@
 #pragma once
 #include "../ARObject.h"
 #include "../Rendering/RenderStrategy.h"
+#include "../../Config.h"
 #include <opencv2/opencv.hpp>
 #include <vector>
 
@@ -29,11 +30,27 @@ public:
         }
     }
 
+
     virtual const std::vector<std::vector<cv::Point3f>>& getPolygons() const = 0;
     virtual const std::vector<cv::Scalar>& getColors() const = 0;
+
+
+    // Extra scale factor to make things more easily adjustable
+    virtual void scalePoints(std::vector<std::vector<cv::Point3f>> *polygons, float factor = 1.0) {
+        float markerLength = Config::getInstance().getMarkerLength() * factor;
+        for (auto &polygon : *polygons) {
+            for (auto &point : polygon) {
+                point.x *= markerLength;
+                point.y *= markerLength;
+                point.z *= markerLength;
+            }
+        }
+    }
+
 
 protected:
     int markerID;
     RenderStrategy* renderStrategy;
+
 };
 #endif //AR_SETTLERS_ARUCOOBJECT_H

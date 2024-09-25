@@ -9,6 +9,6 @@
 
 class NonPlayerPiece : public GamePiece {
 public:
-    NonPlayerPiece(int markerID) : GamePiece(markerID) {}
+    NonPlayerPiece(int markerID, RenderStrategy *renderStrategy = nullptr) : GamePiece(markerID, renderStrategy) {}
 };
 #endif //AR_SETTLERS_NONPLAYERPIECE_H
