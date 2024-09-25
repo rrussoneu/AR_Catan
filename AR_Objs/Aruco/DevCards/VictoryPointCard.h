@@ -11,14 +11,14 @@
 class VictoryPointCard : public DevelopmentCard {
 public:
     VictoryPointCard(int markerID) : DevelopmentCard(markerID, &OpenCVRenderStrategy::getInstance()) {
-        std::vector<cv::Point3f> frontMain = {cv::Point3f(-0.25f, 0.5f, 0.0), cv::Point3f(-0.25f, 0.5f, 0.5f), cv::Point3f(0.25f, 0.5f, 0.5f), cv::Point3f(0.25f, 0.5f, 0.0)};
-        std::vector<cv::Point3f> frontLeft = {cv::Point3f(-0.25f, 0.5f, 0.0), cv::Point3f(-0.25f, 0.5f, 0.25f), cv::Point3f(-0.5f, 0.25f, 0.25f), cv::Point3f(-0.5f, 0.25f, 0.0)};
-        std::vector<cv::Point3f> frontRight = {cv::Point3f(0.25f, 0.5f, 0.0), cv::Point3f(0.25f, 0.5f, 0.25f), cv::Point3f(0.5f, 0.25f, 0.25f), cv::Point3f(0.5f, 0.25f, 0.0)};
-        std::vector<cv::Point3f> leftMain = {cv::Point3f(-0.5f, 0.25f, 0.0), cv::Point3f(-0.5f, 0.25f, 0.5f), cv::Point3f(-0.5f, -0.25f, 0.5f), cv::Point3f(-0.5f, -0.25f, 0.0)};
-        std::vector<cv::Point3f> rightMain = {cv::Point3f(0.5f, 0.25f, 0.0), cv::Point3f(0.5f, 0.25f, 0.5f), cv::Point3f(0.5f, -0.25f, 0.5f), cv::Point3f(0.5f, -0.25f, 0.0)};
-        std::vector<cv::Point3f> backLeft = {cv::Point3f(-0.25f, -0.5f, 0.0), cv::Point3f(-0.25f, -0.5f, 0.25f), cv::Point3f(-0.5f, -0.25f, 0.25f), cv::Point3f(-0.5f, -0.25f, 0.0)};
-        std::vector<cv::Point3f> backRight = {cv::Point3f(0.25f, -0.5f, 0.0), cv::Point3f(0.25f, -0.5f, 0.25f), cv::Point3f(0.5f, -0.25f, 0.25f), cv::Point3f(0.5f, -0.25f, 0.0)};
-        std::vector<cv::Point3f> backMain = {cv::Point3f(-0.25f, -0.5f, 0.0), cv::Point3f(-0.25f, -0.5f, 0.5f), cv::Point3f(0.25f, -0.5f, 0.5f), cv::Point3f(0.25f, -0.5f, 0.0)};
+        std::vector<cv::Point3f> frontMain = {cv::Point3f(-0.25f, 0.5f, 0.0f), cv::Point3f(-0.25f, 0.5f, 0.5f), cv::Point3f(0.25f, 0.5f, 0.5f), cv::Point3f(0.25f, 0.5f, 0.0f)};
+        std::vector<cv::Point3f> frontLeft = {cv::Point3f(-0.25f, 0.5f, 0.0f), cv::Point3f(-0.25f, 0.5f, 0.25f), cv::Point3f(-0.5f, 0.25f, 0.25f), cv::Point3f(-0.5f, 0.25f, 0.0f)};
+        std::vector<cv::Point3f> frontRight = {cv::Point3f(0.25f, 0.5f, 0.0f), cv::Point3f(0.25f, 0.5f, 0.25f), cv::Point3f(0.5f, 0.25f, 0.25f), cv::Point3f(0.5f, 0.25f, 0.0f)};
+        std::vector<cv::Point3f> leftMain = {cv::Point3f(-0.5f, 0.25f, 0.0f), cv::Point3f(-0.5f, 0.25f, 0.5f), cv::Point3f(-0.5f, -0.25f, 0.5f), cv::Point3f(-0.5f, -0.25f, 0.0f)};
+        std::vector<cv::Point3f> rightMain = {cv::Point3f(0.5f, 0.25f, 0.0f), cv::Point3f(0.5f, 0.25f, 0.5f), cv::Point3f(0.5f, -0.25f, 0.5f), cv::Point3f(0.5f, -0.25f, 0.0f)};
+        std::vector<cv::Point3f> backLeft = {cv::Point3f(-0.25f, -0.5f, 0.0f), cv::Point3f(-0.25f, -0.5f, 0.25f), cv::Point3f(-0.5f, -0.25f, 0.25f), cv::Point3f(-0.5f, -0.25f, 0.0f)};
+        std::vector<cv::Point3f> backRight = {cv::Point3f(0.25f, -0.5f, 0.0f), cv::Point3f(0.25f, -0.5f, 0.25f), cv::Point3f(0.5f, -0.25f, 0.25f), cv::Point3f(0.5f, -0.25f, 0.0f)};
+        std::vector<cv::Point3f> backMain = {cv::Point3f(-0.25f, -0.5f, 0.0f), cv::Point3f(-0.25f, -0.5f, 0.5f), cv::Point3f(0.25f, -0.5f, 0.5f), cv::Point3f(0.25f, -0.5f, 0.0f)};
 
         polygons.push_back(frontMain);
         polygons.push_back(frontLeft);
