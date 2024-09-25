@@ -7,15 +7,23 @@
 #pragma once
 #include "DevelopmentCard.h"
 #include "../../ARObjectFactory.h"
+#include "../../Rendering/OpenCVRenderStrategy.h"
 
 
 class KnightCard : public DevelopmentCard {
 public:
-    KnightCard(int markerID)
-            : DevelopmentCard(markerID) {}
+    KnightCard(int markerID): DevelopmentCard(markerID, &OpenCVRenderStrategy::getInstance()) {
 
-    void render(cv::Mat &frame, const std::vector<cv::Point2f> &markerCorners, const cv::Vec3d &rvec, const cv::Vec3d &tvec, const std::vector<double> &distCoeffs, const cv::Mat &cameraMatrix) override {
-        // Add logic
+        std::vector<cv::Point3f> sword = {cv::Point3f(0.0f, 0.0f, 0.0f), cv::Point3f(0.0f,0.0f, 0.65f)};
+        std::vector<cv::Point3f> guard = {cv::Point3f(-0.15f, 0.0f, 0.65f), cv::Point3f(0.15f,0.0f, 0.65f)};
+        std::vector<cv::Point3f> handle = {cv::Point3f(0.0f, 0.0f, 0.65f), cv::Point3f(0.0f,0.0f, 0.8f)};
+        polygons.push_back(sword);
+        polygons.push_back(guard);
+        polygons.push_back(handle);
+        scalePoints(&polygons);
+        colors.push_back(cv::Scalar(80,80,80));
+        colors.push_back(cv::Scalar(20,70,140));
+        colors.push_back(cv::Scalar(20,70,140));
     }
 
     static void registerKnightCard() {
@@ -31,15 +39,17 @@ public:
 
     const std::vector<std::vector<cv::Point3f>>& getPolygons() const override {
         // Return empty or default value
-        static std::vector<std::vector<cv::Point3f>> emptyPolygons;
-        return emptyPolygons;
+        return polygons;
     }
 
     const std::vector<cv::Scalar>& getColors() const override {
         // Return empty or default value
-        static std::vector<cv::Scalar> emptyColors;
-        return emptyColors;
+        return colors;
     }
+
+private:
+    std::vector<std::vector<cv::Point3f>> polygons;
+    std::vector<cv::Scalar> colors;
 };
 
 
