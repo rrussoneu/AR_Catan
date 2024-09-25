@@ -38,21 +38,21 @@ public:
 
     // https://doc.qt.io/qt-6/signalsandslots.html Useful reference
 public slots:
-    void processFrame(const cv::Mat& frame);
+    void processFrame(const cv::Mat &frame);
     void switchToCamera();
-    void switchToRTSP(const QString& rtspUrl);
+    void switchToRTSP(const QString &rtspUrl);
 
     // Slots for view interaction
     void rollDice();
     void finishGame();
-    void updatePlayerUsername(const QString& color, const QString& username);
-    void incrementPlayerScore(const QString& color);
-    void decrementPlayerScore(const QString& color);
-    void onFrameProcessed(const cv::Mat& frame);
+    void updatePlayerUsername(const QString &color, const QString &username);
+    void incrementPlayerScore(const QString &color);
+    void decrementPlayerScore(const QString &color);
+    void onFrameProcessed(const cv::Mat &frame);
 
 signals:
     // Signal to send processed frame to View
-    void frameReady(const cv::Mat& frame);
+    void frameReady(const cv::Mat &frame);
 
 
 
@@ -61,7 +61,7 @@ signals:
 
     // Signal for player update
     //void playerUpdated(const QString& color, const Player& player);
-    void playerUpdated(const QMap<QString, QVariant>& playerInfo);
+    void playerUpdated(const QMap<QString, QVariant> &playerInfo);
 
 
 private:
@@ -82,9 +82,6 @@ private:
         }
     }
 
-
-    // Method to detect markers and update the model
-    // void markerdetect/modelupdate(cv::Mat &frame);
 
 };
 

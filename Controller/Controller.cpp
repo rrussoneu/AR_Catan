@@ -9,7 +9,7 @@
 #include <opencv2/aruco.hpp>
 #include <QMessageBox>
 
-Controller::Controller(GameModel* model, QObject* parent)
+Controller::Controller(GameModel *model, QObject *parent)
         : QObject(parent), model(model), currentInput(nullptr), captureThread(nullptr),
           cameraInput(new CameraInput()), rtspInput(nullptr), processingThread(new ProcessingThread(model)) {
     // Initialize players
@@ -57,7 +57,7 @@ void Controller::switchToCamera() {
     captureThread->start();
 }
 
-void Controller::switchToRTSP(const QString& rtspUrl) {
+void Controller::switchToRTSP(const QString &rtspUrl) {
     stopCurrentInput();
 
     if (rtspInput) {
@@ -76,7 +76,7 @@ void Controller::switchToRTSP(const QString& rtspUrl) {
     captureThread->start();
 }
 
-void Controller::processFrame(const cv::Mat& frame) {
+void Controller::processFrame(const cv::Mat &frame) {
     // Enqueue frame for processing
     processingThread->enqueueFrame(frame);
 }
@@ -97,41 +97,17 @@ void Controller::finishGame() {
     // Save stats or reset game state or whatever
 }
 
-void Controller::updatePlayerUsername(const QString& color, const QString& username) {
+void Controller::updatePlayerUsername(const QString &color, const QString &username) {
     runCommand(std::make_unique<UpdateUsernameCommand>(model, color, username));
 }
 
-void Controller::incrementPlayerScore(const QString& color) {
+void Controller::incrementPlayerScore(const QString &color) {
     runCommand(std::make_unique<IncrementScoreCommand>(model, color));
 }
 
-void Controller::decrementPlayerScore(const QString& color) {
+void Controller::decrementPlayerScore(const QString &color) {
     runCommand(std::make_unique<DecrementScoreCommand>(model, color));
 }
 
-/*
-void Controller::updatePlayerUsername(const QString& color, const QString& username) {
-    Player* player = model->getPlayer(color.toStdString());
-    if (player) {
-        player->setUsername(username.toStdString());
-        emit playerUpdated(color, *player);
-    }
-}
 
-void Controller::incrementPlayerScore(const QString& color) {
-    Player* player = model->getPlayer(color.toStdString());
-    if (player) {
-        player->incrementScore();
-        emit playerUpdated(color, *player);
-    }
-}
-
-void Controller::decrementPlayerScore(const QString& color) {
-    Player* player = model->getPlayer(color.toStdString());
-    if (player) {
-        player->decrementScore();
-        emit playerUpdated(color, *player);
-    }
-}
-*/
 

@@ -65,6 +65,16 @@ add_executable(AR_Settlers main.cpp
         Model/InitARObjects.h
         Controller/Processing/ProcessingThread.cpp
         Controller/Processing/ProcessingThread.h
+        Model/Player.cpp
+        Model/Player.h
+        Model/GameModel.cpp
+        Controller/Commands/Command.h
+        Controller/Commands/UpdateUsernameCommand.h
+        Controller/Commands/IncrementScoreCommand.h
+        Controller/Commands/DecrementScoreCommand.h
+        Controller/PlayerInfoBuilder.h
+        AR_Objs/Rendering/RenderStrategy.h
+        AR_Objs/Rendering/OpenCVRenderStrategy.h
 )
 
 target_link_libraries(AR_Settlers

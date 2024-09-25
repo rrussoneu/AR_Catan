@@ -42,6 +42,9 @@ private:
 
     void processFrame(const cv::Mat &frame);
 
+    cv::Mat cameraMatrix;
+    std::vector<double> distCoeffs;
+
 
 
 };

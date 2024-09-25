@@ -9,7 +9,10 @@
 
 class GamePiece : public ArucoObject {
 public:
-    GamePiece(int markerID) : ArucoObject(markerID) {}
+    GamePiece(int markerID, RenderStrategy *renderStrategy = nullptr) : ArucoObject(markerID, renderStrategy) {}
+
+    // Accessors for attributes used in rendering
+    virtual const std::vector<std::vector<cv::Point3f>>& getPolygons() const = 0;
 
 };
 

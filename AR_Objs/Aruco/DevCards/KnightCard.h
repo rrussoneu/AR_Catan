@@ -8,17 +8,14 @@
 #include "DevelopmentCard.h"
 #include "../../ARObjectFactory.h"
 
-// Add later: public HomographyObj
+
 class KnightCard : public DevelopmentCard {
 public:
-    KnightCard(int markerID) : DevelopmentCard(markerID) {}
+    KnightCard(int markerID)
+            : DevelopmentCard(markerID) {}
 
-    void render(cv::Mat& frame) override {
-
-    }
-
-    static ARObject* create(int markerID) {
-        return new KnightCard(markerID);
+    void render(cv::Mat &frame, const std::vector<cv::Point2f> &markerCorners, const cv::Vec3d &rvec, const cv::Vec3d &tvec, const std::vector<double> &distCoeffs, const cv::Mat &cameraMatrix) override {
+        // Add logic
     }
 
     static void registerKnightCard() {
@@ -27,5 +24,23 @@ public:
         }
     }
 
+    static ArucoObject* create(int markerID) {
+        return new KnightCard(markerID);
+    }
+
+
+    const std::vector<std::vector<cv::Point3f>>& getPolygons() const override {
+        // Return empty or default value
+        static std::vector<std::vector<cv::Point3f>> emptyPolygons;
+        return emptyPolygons;
+    }
+
+    const std::vector<cv::Scalar>& getColors() const override {
+        // Return empty or default value
+        static std::vector<cv::Scalar> emptyColors;
+        return emptyColors;
+    }
 };
+
+
 #endif //AR_SETTLERS_KNIGHTCARD_H

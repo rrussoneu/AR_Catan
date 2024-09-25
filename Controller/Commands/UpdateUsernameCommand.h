@@ -11,16 +11,16 @@
 
 class UpdateUsernameCommand : public Command {
 private:
-    GameModel* model;
+    GameModel *model;
     QString color;
     QString username;
 
 public:
-    UpdateUsernameCommand(GameModel* model, const QString& color, const QString& username)
+    UpdateUsernameCommand(GameModel *model, const QString &color, const QString &username)
             : model(model), color(color), username(username) {}
 
     QMap<QString, QVariant> run() override {
-        Player* player = model->getPlayer(color.toStdString());
+        Player *player = model->getPlayer(color.toStdString());
         if (player) {
             player->setUsername(username.toStdString());
             return PlayerInfoBuilder()

@@ -6,10 +6,11 @@
 #define AR_SETTLERS_PLAYERPIECE_H
 #pragma once
 #include "../GamePiece.h"
+#include "../../../Rendering/OpenCVRenderStrategy.h"
 
 class PlayerPiece : public GamePiece {
 public:
-    PlayerPiece(int markerID, const std::string& color) : GamePiece(markerID), color(color) {}
+    PlayerPiece(int markerID, const std::string &color) : GamePiece(markerID, &OpenCVRenderStrategy::getInstance()), color(color) {}
 
     std::string getColor() const {
         return color;

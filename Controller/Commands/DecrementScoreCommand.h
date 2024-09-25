@@ -11,15 +11,15 @@
 
 class DecrementScoreCommand : public Command {
 private:
-    GameModel* model;
+    GameModel *model;
     QString color;
 
 public:
-    DecrementScoreCommand(GameModel* model, const QString& color)
+    DecrementScoreCommand(GameModel *model, const QString &color)
             : model(model), color(color) {}
 
     QMap<QString, QVariant> run() override {
-        Player* player = model->getPlayer(color.toStdString());
+        Player *player = model->getPlayer(color.toStdString());
         if (player) {
             player->decrementScore();
             return PlayerInfoBuilder()

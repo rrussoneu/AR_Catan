@@ -12,11 +12,11 @@
 
 class PlayerInfoBuilder {
 public:
-    PlayerInfoBuilder& setColor(const QString& value) {
+    PlayerInfoBuilder& setColor(const QString &value) {
         color = value;
         return *this;
     }
-    PlayerInfoBuilder& setUsername(const QString& value) {
+    PlayerInfoBuilder& setUsername(const QString &value) {
         username = value;
         return *this;
     }

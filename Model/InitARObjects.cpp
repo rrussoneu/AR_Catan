@@ -55,7 +55,7 @@ void initARObjects(GameModel &model) {
     WoolHex::registerWoolHex();
 
     for (int markerID = 1; markerID <= 147; ++markerID) {
-        ARObject *arObject = ARObjectFactory::createARObject(markerID);
+        ArucoObject *arObject = ARObjectFactory::createARObject(markerID);
         if (arObject) {
             model.addObject(markerID, arObject);
         }
