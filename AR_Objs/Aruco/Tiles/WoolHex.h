@@ -12,11 +12,8 @@ class WoolHex : public HexTile {
 public:
     WoolHex(int markerID) : HexTile(markerID) {}
 
-    void render(cv::Mat& frame) override {
 
-    }
-
-    static ARObject* create(int markerID) {
+    static ArucoObject* create(int markerID) {
         return new WoolHex(markerID);
     }
 
@@ -25,6 +22,18 @@ public:
             ARObjectFactory::registerFactory(markerID, WoolHex::create);
         }
 
+    }
+
+    const std::vector<std::vector<cv::Point3f>>& getPolygons() const override {
+        // Return empty or default value
+        static std::vector<std::vector<cv::Point3f>> emptyPolygons;
+        return emptyPolygons;
+    }
+
+    const std::vector<cv::Scalar>& getColors() const override {
+        // Return empty or default value
+        static std::vector<cv::Scalar> emptyColors;
+        return emptyColors;
     }
 
 };

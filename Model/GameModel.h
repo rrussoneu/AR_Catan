@@ -7,6 +7,7 @@
 #pragma once
 #include <unordered_map>
 #include "../AR_Objs/ARObject.h"
+#include "Player.h"
 
 class GameModel {
 public:
@@ -22,7 +23,13 @@ public:
         return nullptr;
     }
 
+    void addPlayer(const Player &player);
+    Player *getPlayer(const std::string &color);
+
+    int rollDice();
+
 private:
     std::unordered_map<int, ARObject*> objectMap;
+    std::unordered_map<std::string, Player> players;
 };
 #endif //AR_SETTLERS_GAMEMODEL_H

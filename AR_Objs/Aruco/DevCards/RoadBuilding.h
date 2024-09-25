@@ -13,11 +13,11 @@ class RoadBuildingCard : public DevelopmentCard {
 public:
     RoadBuildingCard(int markerID) : DevelopmentCard(markerID) {}
 
-    void render(cv::Mat& frame) override {
-
+    void render(cv::Mat &frame, const std::vector<cv::Point2f> &markerCorners, const cv::Vec3d &rvec, const cv::Vec3d &tvec, const std::vector<double> &distCoeffs, const cv::Mat &cameraMatrix) override {
+        // Add logic
     }
 
-    static ARObject* create(int markerID) {
+    static ArucoObject* create(int markerID) {
         return new RoadBuildingCard(markerID);
     }
 
@@ -25,6 +25,18 @@ public:
         for (int markerID = 118; markerID <= 119; ++markerID) {
             ARObjectFactory::registerFactory(markerID, RoadBuildingCard::create);
         }
+    }
+
+    const std::vector<std::vector<cv::Point3f>>& getPolygons() const override {
+        // Return empty or default value
+        static std::vector<std::vector<cv::Point3f>> emptyPolygons;
+        return emptyPolygons;
+    }
+
+    const std::vector<cv::Scalar>& getColors() const override {
+        // Return empty or default value
+        static std::vector<cv::Scalar> emptyColors;
+        return emptyColors;
     }
 
 };

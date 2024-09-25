@@ -15,6 +15,7 @@
 #include <QHBoxLayout>
 #include <QTimer>
 #include <opencv2/opencv.hpp>
+#include <QGroupBox>
 #include "../Controller/Controller.h"
 
 class GUIView : public QWidget {
@@ -27,10 +28,25 @@ public:
 
 public slots:
     void updateVideoFeed(const cv::Mat& frame); // Slot to update  video feed
+    void updateDiceRoll(int roll);
+    //void updatePlayerInfo(const QString& color, const Player& player);
+    void updatePlayerInfo(const QMap<QString, QVariant>& playerInfo);
 
 private:
     QLabel* videoLabel;   // Video display
     Controller* controller;
+
+    // Roll dice
+    QPushButton *rollDiceButton;
+    QLabel *diceRollLabel;
+
+    // Finish game
+    QPushButton *finishGameButton;
+
+    // Player panels - each player color gets one
+    QGroupBox* createPlayerPanel(const QString& color);
+    std::unordered_map<QString, QGroupBox*> playerPanels;
+
 };
 
 

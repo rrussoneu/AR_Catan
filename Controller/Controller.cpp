@@ -3,12 +3,24 @@
 //
 
 #include "Controller.h"
+#include "Commands/UpdateUsernameCommand.h"
+#include "Commands/IncrementScoreCommand.h"
+#include "Commands/DecrementScoreCommand.h"
 #include <opencv2/aruco.hpp>
+#include <QMessageBox>
 
-Controller::Controller(GameModel* model, QObject* parent)
+Controller::Controller(GameModel *model, QObject *parent)
         : QObject(parent), model(model), currentInput(nullptr), captureThread(nullptr),
-          cameraInput(new CameraInput()), rtspInput(nullptr) {
-    // Default to camera input
+          cameraInput(new CameraInput()), rtspInput(nullptr), processingThread(new ProcessingThread(model)) {
+    // Initialize players
+    QStringList colors = {"blue", "red", "orange", "white"};
+    for (const QString& color : colors) {
+        model->addPlayer(Player(color.toStdString()));
+    }
+
+    connect(processingThread, &ProcessingThread::frameProcessed, this, &Controller::onFrameProcessed);
+    processingThread->start();
+
     switchToCamera();
 }
 
@@ -45,7 +57,7 @@ void Controller::switchToCamera() {
     captureThread->start();
 }
 
-void Controller::switchToRTSP(const QString& rtspUrl) {
+void Controller::switchToRTSP(const QString &rtspUrl) {
     stopCurrentInput();
 
     if (rtspInput) {
@@ -64,12 +76,38 @@ void Controller::switchToRTSP(const QString& rtspUrl) {
     captureThread->start();
 }
 
-void Controller::processFrame(const cv::Mat& frame) {
-    cv::Mat processedFrame = frame.clone();
-
-    // Perform marker detection and update the Model
-    //marker and model stuff (processedFrame);
-
-    // Emit the processed frame to the View
-    emit frameReady(processedFrame);
+void Controller::processFrame(const cv::Mat &frame) {
+    // Enqueue frame for processing
+    processingThread->enqueueFrame(frame);
 }
+
+void Controller::onFrameProcessed(const cv::Mat &frame) {
+    // Emit processed frame to view
+    emit frameReady(frame);
+}
+
+void Controller::rollDice() {
+    int roll = model->rollDice();
+    emit diceRolled(roll);
+}
+
+void Controller::finishGame() {
+    // Handle game finish logic
+    QMessageBox::information(nullptr, "Game Finished", "The game has ended.");
+    // Save stats or reset game state or whatever
+}
+
+void Controller::updatePlayerUsername(const QString &color, const QString &username) {
+    runCommand(std::make_unique<UpdateUsernameCommand>(model, color, username));
+}
+
+void Controller::incrementPlayerScore(const QString &color) {
+    runCommand(std::make_unique<IncrementScoreCommand>(model, color));
+}
+
+void Controller::decrementPlayerScore(const QString &color) {
+    runCommand(std::make_unique<DecrementScoreCommand>(model, color));
+}
+
+
+
