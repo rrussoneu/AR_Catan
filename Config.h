@@ -38,7 +38,7 @@ public:
 
 private:
 
-    Config() : markerLength(0.027f) {}
+    Config() : markerLength(0.038f) {}
 
 
     float markerLength;
