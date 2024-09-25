@@ -11,7 +11,15 @@
 // Add later: public HomographyObj
 class YearOfPlentyCard : public DevelopmentCard {
 public:
-    YearOfPlentyCard(int markerID) : DevelopmentCard(markerID) {}
+    YearOfPlentyCard(int markerID) : DevelopmentCard(markerID, &OpenCVRenderStrategy::getInstance()) {
+        std::vector<cv::Point3f> vertical = {cv::Point3f(0.0f,0.0f,0.25f), cv::Point3f(0.0f,0.0f,0.75f)};
+        std::vector<cv::Point3f> horizontal = {cv::Point3f(-0.25f, 0.0, 0.5f), cv::Point3f(0.25f, 0.0, 0.5f)};
+        polygons.push_back(vertical);
+        polygons.push_back(horizontal);
+        scalePoints(&polygons);
+        colors.push_back(cv::Scalar(0,255,0));
+        colors.push_back(cv::Scalar(0,255,0));
+    }
 
 
 
@@ -25,16 +33,14 @@ public:
         }
     }
     const std::vector<std::vector<cv::Point3f>>& getPolygons() const override {
-        // Return empty or default value
-        static std::vector<std::vector<cv::Point3f>> emptyPolygons;
-        return emptyPolygons;
+       return polygons;
     }
 
     const std::vector<cv::Scalar>& getColors() const override {
-        // Return empty or default value
-        static std::vector<cv::Scalar> emptyColors;
-        return emptyColors;
+        return colors;
     }
-
+private:
+    std::vector<std::vector<cv::Point3f>> polygons;
+    std::vector<cv::Scalar> colors;
 };
 #endif //AR_SETTLERS_YEAROFPLENTYCARD_H
