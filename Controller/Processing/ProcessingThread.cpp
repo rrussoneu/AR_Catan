@@ -4,12 +4,15 @@
 
 #include "ProcessingThread.h"
 #include "../../Config.h"
+#include <QOpenGLFramebufferObject>
+#include <QDebug>
 
 #include <opencv2/aruco.hpp>
+#include <QOpenGLFunctions>
 
 ProcessingThread::ProcessingThread(GameModel *model, QObject *parent) : QThread(parent), model(model), stopThread(false),
         dictionary(cv::aruco::getPredefinedDictionary(cv::aruco::DICT_4X4_1000)), detectorParams(cv::aruco::DetectorParameters()),
-        detector(dictionary, detectorParams){
+        detector(dictionary, detectorParams), glContext(nullptr), offScreenSurface(nullptr){
 
         try {
             cv::FileStorage fs("camera_calibration_setting.xml", cv::FileStorage::READ);
@@ -17,6 +20,8 @@ ProcessingThread::ProcessingThread(GameModel *model, QObject *parent) : QThread(
                 fs["camera_matrix"] >> cameraMatrix;
                 fs["distortion_coefficients"] >> distCoeffs;
                 fs.release();
+            } else {
+                printf("Calibration file opening failed.");
             }
         } catch (int e) {
             printf("Error with loading calibration");
@@ -31,6 +36,16 @@ ProcessingThread::~ProcessingThread() {
     frameAvailable.wakeOne();
     mutex.unlock();
     wait();
+
+    // Clean up OpenGL resources
+    if (glContext) {
+        glContext->makeCurrent(offScreenSurface);
+        glContext->doneCurrent();
+        delete glContext;
+    }
+    if (offScreenSurface) {
+        delete offScreenSurface;
+    }
 }
 
 void ProcessingThread::enqueueFrame(const cv::Mat &frame) {
@@ -40,6 +55,37 @@ void ProcessingThread::enqueueFrame(const cv::Mat &frame) {
 }
 
 void ProcessingThread::run() {
+    // First need OpenGL init with context and off screen surface
+
+    // Create OpenGL context and offscreen surface
+    glContext = new QOpenGLContext();
+    QSurfaceFormat format;
+    format.setDepthBufferSize(24);
+    format.setStencilBufferSize(8);
+    glContext->setFormat(format);
+    if (!glContext->create()) {
+        qWarning() << "Failed to create OpenGL context";
+        return;
+    }
+
+    offScreenSurface = new QOffscreenSurface();
+    offScreenSurface->setFormat(glContext->format());
+    offScreenSurface->create();
+
+    if (!offScreenSurface->isValid()) {
+        qWarning() << "Offscreen surface is not valid";
+        return;
+    }
+
+    if (!glContext->makeCurrent(offScreenSurface)) {
+        qWarning() << "Failed to make OpenGL context current";
+        return;
+    }
+
+    // Init OpenGL functions
+    QOpenGLFunctions *glFunctions = glContext->functions();
+    glFunctions->initializeOpenGLFunctions();
+
     while (true) {
         cv::Mat frame;
         mutex.lock();
@@ -83,7 +129,7 @@ void ProcessingThread::processFrame(const cv::Mat &frame) {
 
     // Render objects based on the markers detected
     if (!markerIDs.empty()) {
-
+        std::vector<ARObject*> detectedObjects;
         cv::aruco::drawDetectedMarkers(processedFrame, markerCorners, markerIDs);
 
         std::vector<cv::Vec3d> rvecs(markerCorners.size()), tvecs(markerCorners.size()); // rotation, translation vectors
@@ -97,16 +143,23 @@ void ProcessingThread::processFrame(const cv::Mat &frame) {
         for (size_t i = 0; i < markerIDs.size(); ++i) {
             int markerID = markerIDs[i];
             ARObject* arObject = model->getObject(markerID);
+
+            if (!arObject) {
+                continue;
+            }
+
             solvePnP(obj_points, markerCorners.at(i), cameraMatrix, distCoeffs, rvecs.at(i), tvecs.at(i), cv::SOLVEPNP_ITERATIVE);
 
             cv::drawFrameAxes(processedFrame, cameraMatrix, distCoeffs, rvecs.at(i), tvecs.at(i), marker_length, 2);
-            if (arObject) {
-                arObject->render(processedFrame, markerCorners.at(i), rvecs.at(i), tvecs.at(i), distCoeffs, cameraMatrix);
-            }
+            arObject->render(processedFrame, markerCorners.at(i), rvecs.at(i), tvecs.at(i), distCoeffs, cameraMatrix);
+
         }
+        //emit objectsProcessed(detectedObjects);
     }
 
     // Emit processed frame
     emit frameProcessed(processedFrame);
+
+
 
 }
