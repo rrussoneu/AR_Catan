@@ -11,6 +11,7 @@
 #include <opencv2/opencv.hpp>
 #include <vector>
 
+
 class ArucoObject : public ARObject {
 public:
     ArucoObject(int markerID, RenderStrategy* strategy = nullptr)
@@ -30,6 +31,9 @@ public:
         }
     }
 
+    std::string getModelName() {
+        return "NONE";
+    };
 
     virtual const std::vector<std::vector<cv::Point3f>>& getPolygons() const = 0;
     virtual const std::vector<cv::Scalar>& getColors() const = 0;

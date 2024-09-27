@@ -16,5 +16,21 @@ public:
 
     virtual void render(cv::Mat &frame, const std::vector<cv::Point2f> &markerCorners, const cv::Vec3d &rvec, const cv::Vec3d &tvec, const std::vector<double> &distCoeffs, const cv::Mat &cameraMatrix) = 0;
 
+    void setPose(const cv::Vec3d& r, const cv::Vec3d& t) {
+        rvec = r;
+        tvec = t;
+    }
+
+    cv::Vec3d getRvec() const { return rvec; }
+    cv::Vec3d getTvec() const { return tvec; }
+
+    void setMarkerCorners(const std::vector<cv::Point2f> corners) {
+        markerCorners = corners;
+    }
+    std::vector<cv::Point2f> getMarkerCorners() const { return markerCorners; }
+private:
+    cv::Vec3d rvec;
+    cv::Vec3d tvec;
+    std::vector<cv::Point2f> markerCorners;
 };
 #endif //AR_SETTLERS_AROBJECT_H
