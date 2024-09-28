@@ -26,7 +26,7 @@ public:
 
 signals:
     void frameProcessed(const cv::Mat& frame);
-    //void objectsProcessed(const std::vector<ARObject*> detectedObjects);
+
 
 protected:
     void run() override;
@@ -51,6 +51,8 @@ private:
 
     QOpenGLContext *glContext;
     QOffscreenSurface *offScreenSurface;
+
+    RenderStrategy *renderStrategy;
 
 
 

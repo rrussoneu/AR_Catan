@@ -61,7 +61,7 @@ void ProcessingThread::enqueueFrame(const cv::Mat &frame) {
 }
 
 void ProcessingThread::run() {
-    // First need OpenGL init with context and off screen surface
+    // First need OpenGL init with context and offscreen surface
 
     // Create OpenGL context and offscreen surface
     glContext = new QOpenGLContext();
@@ -94,9 +94,6 @@ void ProcessingThread::run() {
     // Init OpenGL functions
     QOpenGLFunctions *glFunctions = glContext->functions();
     glFunctions->initializeOpenGLFunctions();
-
-    //QString glVersion = QString(reinterpret_cast<const char*>(glFunctions->glGetString(GL_VERSION)));
-    //qDebug() << "OpenGL Version:" << glVersion;
 
     // Create and init OpenGLRenderStrategy
     renderStrategy = new OpenGLRenderStrategy(glContext);
@@ -144,7 +141,7 @@ void ProcessingThread::processFrame(const cv::Mat &frame) {
         std::vector<ARObject*> detectedObjects;
         cv::aruco::drawDetectedMarkers(processedFrame, markerCorners, markerIDs);
 
-        std::vector<cv::Vec3d> rvecs(markerCorners.size()), tvecs(markerCorners.size()); // rotation, translation vectors
+        std::vector<cv::Vec3d> rvecs(markerCorners.size()), tvecs(markerCorners.size()); // Rotation, translation vectors
         cv::Mat obj_points(4, 1, CV_32FC3);
         float marker_length = Config::getInstance().getMarkerLength();
         obj_points.ptr<cv::Vec3f>(0)[0] = cv::Vec3f(-marker_length/2.f, marker_length/2.f, 0);
@@ -168,15 +165,12 @@ void ProcessingThread::processFrame(const cv::Mat &frame) {
             solvePnP(obj_points, markerCorners.at(i), cameraMatrix, distCoeffs, rvecs.at(i), tvecs.at(i), cv::SOLVEPNP_ITERATIVE);
 
             cv::drawFrameAxes(processedFrame, cameraMatrix, distCoeffs, rvecs.at(i), tvecs.at(i), marker_length, 2);
-            //if (arObject->getRenderStrategy() )
-            //arObject->render(processedFrame, markerCorners.at(i), rvecs.at(i), tvecs.at(i), distCoeffs, cameraMatrix);
 
-            // Just do OpenGL render for testing
+
             if (arObject->getRenderStrategy()->getType() == 1) {
                 arObject->render(processedFrame, markerCorners.at(i), rvecs.at(i), tvecs.at(i), distCoeffs, cameraMatrix);
             }else {
-                static_cast<OpenGLRenderStrategy*>(renderStrategy)->renderMarker(
-                        rvecs.at(i), tvecs.at(i), distCoeffs, cameraMatrix);
+                arObject->render(processedFrame, markerCorners.at(i), rvecs.at(i), tvecs.at(i), distCoeffs, cameraMatrix);
             }
 
 
@@ -184,7 +178,7 @@ void ProcessingThread::processFrame(const cv::Mat &frame) {
 
         // Combine the frames
         static_cast<OpenGLRenderStrategy*>(renderStrategy)->finalizeRendering(processedFrame);
-        //emit objectsProcessed(detectedObjects);
+
     }
 
     // Emit processed frame
