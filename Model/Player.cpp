@@ -3,14 +3,15 @@
 //
 
 #include "Player.h"
+#include "Database/DatabaseManager.h"
 
-Player::Player(const std::string &color) : color(color), username("guest"), score(0), wins(0), totalScore(0), gamesPlayed(0) {}
+Player::Player() : username("guest"), score(0), wins(0), totalScore(0), gamesPlayed(0) {}
 
-std::string Player::getUsername() const {
+QString Player::getUsername() const {
     return username;
 }
 
-void Player::setUsername(const std::string& username) {
+void Player::setUsername(const QString &username) {
     this->username = username;
 }
 
@@ -55,13 +56,11 @@ float Player::getAverageScore() const {
 
 
 void Player::setTotalScore(int total) {
-    totalScore = score;
+    totalScore = total;
 }
 
 int Player::getTotalScore() const {
     return totalScore;
 }
 
-std::string Player::getColor() const {
-    return color;
-}
+
