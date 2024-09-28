@@ -34,7 +34,7 @@ bool DatabaseManager::openDatabase(const QString &path) {
     db.setDatabaseName(path);
 
     // Return false if issue
-    if (!db.isOpen()) {
+    if (!db.open()) {
         qWarning("Failed to open db");
         return false;
     }
@@ -66,24 +66,26 @@ void DatabaseManager::closeDatabase() {
     }
 }
 
-Player DatabaseManager::getPlayerStats(const QString & username) {
+bool DatabaseManager::getPlayerStats(Player &player) {
     QMutexLocker locker(&mutex);
 
-    Player player(username.toStdString());
+    //Player player(username);
 
     QSqlQuery query;
     query.prepare("SELECT wins, gamesPlayed, totalScore FROM players WHERE username = :username");
-    query.bindValue(":username", username);
+    query.bindValue(":username", player.getUsername());
 
     if (query.exec() && query.next()) {
         player.setWins(query.value("wins").toInt());
         player.setGamesPlayed(query.value("gamesPlayed").toInt());
         player.setTotalScore(query.value("totalScore").toInt());
+        return true; // Player exists
     } else {
-        qWarning("Player not found or query failed");
+        qWarning("Player not found / query failed in getting stats");
+        return false; // Player does not exist
     }
 
-    return player;
+
 }
 
 bool DatabaseManager::addNewPlayer(const Player &player) {
@@ -91,7 +93,7 @@ bool DatabaseManager::addNewPlayer(const Player &player) {
 
     QSqlQuery query;
     query.prepare("INSERT INTO players (username, wins, gamesPlayed, totalScore) VALUES (:username, :wins, :gamesPlayed, :totalScore)");
-    query.bindValue(":username", QString::fromStdString(player.getUsername()));
+    query.bindValue(":username", player.getUsername());
     query.bindValue(":wins", player.getWins());
     query.bindValue(":gamesPlayed", player.getGamesPlayed());
     query.bindValue(":totalScore", player.getTotalScore());
@@ -109,7 +111,7 @@ bool DatabaseManager::updatePlayerStats(const Player &player) {
 
     QSqlQuery query;
     query.prepare("UPDATE players SET wins = :wins, gamesPlayed = :gamesPlayed, totalScore = :totalScore WHERE username = :username");
-    query.bindValue(":username", QString::fromStdString(player.getUsername()));
+    query.bindValue(":username", player.getUsername());
     query.bindValue(":wins", player.getWins());
     query.bindValue(":gamesPlayed", player.getGamesPlayed());
     query.bindValue(":totalScore", player.getTotalScore());

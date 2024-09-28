@@ -23,13 +23,13 @@ public:
     void closeDatabase();
 
     // Repository
-    Player getPlayerStats(const QString &username);
+    bool getPlayerStats(Player &player);
     bool updatePlayerStats(const Player &player);
     bool addNewPlayer(const Player &player);
 
 private:
     explicit DatabaseManager(QObject *parent = nullptr);
-    DatabaseManager(const DatabaseManager&) = default;
+    DatabaseManager(const DatabaseManager&) = delete;
     DatabaseManager& operator=(const DatabaseManager&) = delete;
 
     QSqlDatabase db;
