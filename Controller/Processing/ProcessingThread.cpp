@@ -4,6 +4,7 @@
 
 #include "ProcessingThread.h"
 #include "../../Config.h"
+#include "../../AR_Objs/Rendering/OpenGLRenderStrategy.h"
 #include <QOpenGLFramebufferObject>
 #include <QDebug>
 
@@ -46,6 +47,11 @@ ProcessingThread::~ProcessingThread() {
     if (offScreenSurface) {
         delete offScreenSurface;
     }
+
+    if (renderStrategy) {
+        delete renderStrategy;
+        renderStrategy = nullptr;
+    }
 }
 
 void ProcessingThread::enqueueFrame(const cv::Mat &frame) {
@@ -60,9 +66,12 @@ void ProcessingThread::run() {
     // Create OpenGL context and offscreen surface
     glContext = new QOpenGLContext();
     QSurfaceFormat format;
+    format.setVersion(3, 3); // OpenGL 3.3
+    format.setProfile(QSurfaceFormat::CoreProfile); // Use core
     format.setDepthBufferSize(24);
     format.setStencilBufferSize(8);
     glContext->setFormat(format);
+
     if (!glContext->create()) {
         qWarning() << "Failed to create OpenGL context";
         return;
@@ -85,6 +94,16 @@ void ProcessingThread::run() {
     // Init OpenGL functions
     QOpenGLFunctions *glFunctions = glContext->functions();
     glFunctions->initializeOpenGLFunctions();
+
+    //QString glVersion = QString(reinterpret_cast<const char*>(glFunctions->glGetString(GL_VERSION)));
+    //qDebug() << "OpenGL Version:" << glVersion;
+
+    // Create and init OpenGLRenderStrategy
+    renderStrategy = new OpenGLRenderStrategy(glContext);
+    if (!renderStrategy->initialize()) {
+        qWarning() << "Failed to initialize OpenGL render strategy";
+        return;
+    }
 
     while (true) {
         cv::Mat frame;
@@ -115,16 +134,9 @@ void ProcessingThread::processFrame(const cv::Mat &frame) {
     std::vector<std::vector<cv::Point2f>> rejectedCandidates;
 
     detector.detectMarkers(processedFrame, markerCorners, markerIDs, rejectedCandidates);
-    /*
-    cv::Mat obj_points(4, 1, CV_32FC3);
-    float marker_length = .027; // measured on printed markers
-    obj_points.ptr<cv::Vec3f>(0)[0] = cv::Vec3f(-marker_length/2.f, marker_length/2.f, 0);
-    obj_points.ptr<cv::Vec3f>(0)[1] = cv::Vec3f(marker_length/2.f, marker_length/2.f, 0);
-    obj_points.ptr<cv::Vec3f>(0)[2] = cv::Vec3f(marker_length/2.f, -marker_length/2.f, 0);
-    obj_points.ptr<cv::Vec3f>(0)[3] = cv::Vec3f(-marker_length/2.f, -marker_length/2.f, 0);
 
-    */
-
+    // OpenGL set up fbo
+    static_cast<OpenGLRenderStrategy*>(renderStrategy) ->prepareForRendering(processedFrame);
 
 
     // Render objects based on the markers detected
@@ -148,12 +160,24 @@ void ProcessingThread::processFrame(const cv::Mat &frame) {
                 continue;
             }
 
+            if (arObject->getRenderStrategy() == nullptr) {
+                // Assign the OpenGLRenderStrategy
+                //arObject->setRenderStrategy(renderStrategy);
+            }
+
             solvePnP(obj_points, markerCorners.at(i), cameraMatrix, distCoeffs, rvecs.at(i), tvecs.at(i), cv::SOLVEPNP_ITERATIVE);
 
             cv::drawFrameAxes(processedFrame, cameraMatrix, distCoeffs, rvecs.at(i), tvecs.at(i), marker_length, 2);
-            arObject->render(processedFrame, markerCorners.at(i), rvecs.at(i), tvecs.at(i), distCoeffs, cameraMatrix);
+            //arObject->render(processedFrame, markerCorners.at(i), rvecs.at(i), tvecs.at(i), distCoeffs, cameraMatrix);
+
+            // Just do OpenGL render for testing
+            static_cast<OpenGLRenderStrategy*>(renderStrategy)->renderMarker(
+                    rvecs.at(i), tvecs.at(i), distCoeffs, cameraMatrix);
 
         }
+
+        // Combine the frames
+        static_cast<OpenGLRenderStrategy*>(renderStrategy)->finalizeRendering(processedFrame);
         //emit objectsProcessed(detectedObjects);
     }
 
