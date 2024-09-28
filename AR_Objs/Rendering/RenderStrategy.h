@@ -6,14 +6,22 @@
 #define AR_SETTLERS_RENDERSTRATEGY_H
 #pragma once
 
-#include "../Aruco/ArucoObject.h"
-#include <opencv2/opencv.hpp>
 
-class ArucoObject;
+#include <opencv2/opencv.hpp>
+#include "../ARObject.h"
+
+class ARObject;
 
 class RenderStrategy {
 public:
     virtual ~RenderStrategy() = default;
-    virtual void render(ArucoObject *object, cv::Mat &frame, const std::vector<cv::Point2f> &markerCorners, const cv::Vec3d &rvec, const cv::Vec3d &tvec, const std::vector<double> &distCoeffs, const cv::Mat &cameraMatrix) = 0;
+    virtual void render(ARObject *object, cv::Mat &frame,
+                        const std::vector<cv::Point2f> &markerCorners,
+                        const cv::Vec3d &rvec, const cv::Vec3d &tvec,
+                        const std::vector<double> &distCoeffs,
+                        const cv::Mat &cameraMatrix) = 0;
+    virtual bool initialize(int frameWidth, int frameHeight) = 0;
+
+    virtual int getType() = 0;
 };
 #endif //AR_SETTLERS_RENDERSTRATEGY_H

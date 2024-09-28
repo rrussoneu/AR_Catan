@@ -10,6 +10,6 @@
 
 class HexTile : public ArucoObject {
 public:
-    HexTile(int markerID) : ArucoObject(markerID) {}
+    HexTile(int markerID, RenderStrategy *renderStrategy = nullptr, const std::string &objectName = "") : ArucoObject(markerID, renderStrategy, objectName) {}
 };
 #endif //AR_SETTLERS_HEXTILE_H

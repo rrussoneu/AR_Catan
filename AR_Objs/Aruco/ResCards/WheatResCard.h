@@ -10,7 +10,7 @@
 
 class WheatResCard : public ResourceCard {
 public:
-    WheatResCard(int markerID) : ResourceCard(markerID) {}
+    WheatResCard(int markerID, RenderStrategy *renderStrategy = nullptr, const std::string &objectName = "wheat") : ResourceCard(markerID, renderStrategy, objectName) {}
 
 
 

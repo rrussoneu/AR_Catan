@@ -10,7 +10,7 @@
 
 class WoolResCard : public ResourceCard {
 public:
-    WoolResCard(int markerID) : ResourceCard(markerID) {}
+    WoolResCard(int markerID, RenderStrategy *renderStrategy = nullptr, const std::string &objectName = "wool") : ResourceCard(markerID, renderStrategy, objectName) {}
 
 
     static ArucoObject* create(int markerID) {

@@ -10,7 +10,7 @@
 
 class OreHex : public HexTile {
 public:
-    OreHex(int markerID) : HexTile(markerID) {}
+    OreHex(int markerID, RenderStrategy *renderStrategy = nullptr, const std::string &objectName = "ore") : HexTile(markerID, renderStrategy, objectName) {}
 
 
 
@@ -35,6 +35,10 @@ public:
         // Return empty or default value
         static std::vector<cv::Scalar> emptyColors;
         return emptyColors;
+    }
+
+    std::string getModelName() {
+        return "sheep";
     }
 
 };

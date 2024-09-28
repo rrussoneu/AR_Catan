@@ -7,11 +7,14 @@
 #pragma once
 
 #include <QThread>
-#include <opencv2/opencv.hpp>
+#include <QOpenGLContext>
+#include <QOffscreenSurface>
 #include <QMutex>
+#include <opencv2/opencv.hpp>
 #include <QQueue>
 #include <QWaitCondition>
 #include "../../Model/GameModel.h"
+
 
 class ProcessingThread : public QThread {
 Q_OBJECT
@@ -23,6 +26,7 @@ public:
 
 signals:
     void frameProcessed(const cv::Mat& frame);
+
 
 protected:
     void run() override;
@@ -44,6 +48,12 @@ private:
 
     cv::Mat cameraMatrix;
     std::vector<double> distCoeffs;
+
+    QOpenGLContext *glContext;
+    QOffscreenSurface *offScreenSurface;
+
+    RenderStrategy *renderStrategy;
+
 
 
 

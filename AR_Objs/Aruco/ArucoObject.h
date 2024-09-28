@@ -6,23 +6,21 @@
 #define AR_SETTLERS_ARUCOOBJECT_H
 #pragma once
 #include "../ARObject.h"
-#include "../Rendering/RenderStrategy.h"
+
 #include "../../Config.h"
 #include <opencv2/opencv.hpp>
 #include <vector>
 
 class ArucoObject : public ARObject {
 public:
-    ArucoObject(int markerID, RenderStrategy* strategy = nullptr)
-            : markerID(markerID), renderStrategy(strategy) {}
+    ArucoObject(int markerID, RenderStrategy *strategy= nullptr, const std::string &objectName = "")
+            : markerID(markerID), ARObject(strategy, objectName) {}
 
     virtual ~ArucoObject() = default;
 
     int getMarkerID() const { return markerID; }
 
-    void setRenderStrategy(RenderStrategy* strategy) {
-        renderStrategy = strategy;
-    }
+
 
     void render(cv::Mat &frame, const std::vector<cv::Point2f> &markerCorners, const cv::Vec3d &rvec, const cv::Vec3d &tvec, const std::vector<double> &distCoeffs, const cv::Mat &cameraMatrix) override {
         if (renderStrategy) {
@@ -31,8 +29,8 @@ public:
     }
 
 
-    virtual const std::vector<std::vector<cv::Point3f>>& getPolygons() const = 0;
-    virtual const std::vector<cv::Scalar>& getColors() const = 0;
+    //virtual const std::vector<std::vector<cv::Point3f>>& getPolygons() const = 0;
+    //virtual const std::vector<cv::Scalar>& getColors() const = 0;
 
 
     // Extra scale factor to make things more easily adjustable
@@ -50,7 +48,7 @@ public:
 
 protected:
     int markerID;
-    RenderStrategy* renderStrategy;
+
 
 };
 #endif //AR_SETTLERS_ARUCOOBJECT_H

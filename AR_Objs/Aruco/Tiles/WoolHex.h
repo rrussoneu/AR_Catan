@@ -10,7 +10,7 @@
 
 class WoolHex : public HexTile {
 public:
-    WoolHex(int markerID) : HexTile(markerID) {}
+    WoolHex(int markerID, RenderStrategy *renderStrategy = nullptr, const std::string &objectName = "wool") : HexTile(markerID, renderStrategy, objectName) {}
 
 
     static ArucoObject* create(int markerID) {

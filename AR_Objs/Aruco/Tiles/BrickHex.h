@@ -10,7 +10,7 @@
 
 class BrickHex : public HexTile {
 public:
-    BrickHex(int markerID) : HexTile(markerID) {}
+    BrickHex(int markerID, RenderStrategy *renderStrategy = nullptr, const std::string &objectName = "brick") : HexTile(markerID, renderStrategy, objectName) {}
 
 
 
