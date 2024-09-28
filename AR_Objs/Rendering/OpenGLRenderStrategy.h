@@ -18,7 +18,7 @@
 
 class OpenGLRenderStrategy : public RenderStrategy, protected QOpenGLFunctions {
 public:
-    OpenGLRenderStrategy(QOpenGLContext* context);
+    OpenGLRenderStrategy(QOpenGLContext *context);
     ~OpenGLRenderStrategy();
 
     int getType() override {
@@ -39,12 +39,17 @@ public:
             return;
         }
 
-
-
+        // OpenGL prep
         glViewport(0, 0, frame.cols, frame.rows);
         glEnable(GL_DEPTH_TEST);
-        //glClearColor(0.0f, 0.0f, 1.0f, 1.0f); // Blue bg
+        glDepthFunc(GL_LESS);
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        // Disable blending
+        glDisable(GL_BLEND);
+        // Enable face culling
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
     }
 
 
@@ -101,52 +106,6 @@ public:
         return coordinateTransform * modelView;
     }
 
-    void renderMarker(const cv::Vec3d &rvec, const cv::Vec3d &tvec,
-                      const std::vector<double> &distCoeffs, const cv::Mat &cameraMatrix) {
-        glContext->makeCurrent(glContext->surface());
-
-        shaderProgram.bind();
-        vao.bind();
-        vbo.bind();
-
-        QMatrix4x4 projectionMatrix = createProjectionMatrix(cameraMatrix, fbo->width(), fbo->height(), 0.1, 100.0);
-        QMatrix4x4 modelViewMatrix = createModelViewMatrix(rvec, tvec);
-
-        // Apply scaling after setting up model view matrix
-        float scale = Config::getInstance().getMarkerLength();
-        modelViewMatrix.scale(scale, scale, scale);
-
-        shaderProgram.setUniformValue("uProjectionMatrix", projectionMatrix);
-        shaderProgram.setUniformValue("uModelViewMatrix", modelViewMatrix);
-
-        // Define triangle centered at origin
-        float vertices[] = {
-                -0.5f, -0.5f, 0.0f,
-                0.5f, -0.5f, 0.0f,
-                0.0f,  0.5f, 0.0f
-        };
-        vbo.allocate(vertices, sizeof(vertices));
-
-        shaderProgram.enableAttributeArray("aPosition");
-        shaderProgram.setAttributeBuffer("aPosition", GL_FLOAT, 0, 3);
-
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glDisable(GL_DEPTH_TEST);
-
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
-        vbo.release();
-        vao.release();
-        shaderProgram.release();
-
-        GLenum error = glGetError();
-        if (error != GL_NO_ERROR) {
-            qWarning() << "OpenGL error after rendering:" << error;
-        }
-
-    }
-
     bool initialize() {
         initializeOpenGLFunctions();
 
@@ -157,41 +116,118 @@ public:
             return false;
         }
 
-        vao.create();
-        vbo.create();
+        // Load models
+        // To Do:
+        // Wood, brick, wheat, maybe longest road / largest army
+        std::vector<std::string> modelNames = {
+                "ore",
+                "sheep"
+        };
+        if (!loadModels(modelNames)) {
+            qWarning() << "Failed to load models.";
+            return false;
+        }
+
+
 
         return true;
     }
 
-    // Testing shaders instead of the files
+    // Ignore the shader files - just use these for now at least
     const char* vertexShaderSource = R"(
         #version 330 core
         layout(location = 0) in vec3 aPosition;
+        layout(location = 1) in vec3 aNormal;
+        layout(location = 2) in vec3 aColor;
+        // No textures right now
+        // layout(location = 3) in vec2 aTexCoord;
+
         uniform mat4 uProjectionMatrix;
         uniform mat4 uModelViewMatrix;
+
+        out vec3 fragNormal;
+        out vec3 fragColor;
+        // out vec2 fragTexCoord;
+
         void main() {
             gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aPosition, 1.0);
+            fragNormal = mat3(uModelViewMatrix) * aNormal;
+            fragColor = aColor;
+            // fragTexCoord = aTexCoord;
         }
     )";
 
     const char* fragmentShaderSource = R"(
         #version 330 core
-        out vec4 fragColor;
+        in vec3 fragNormal;
+        in vec3 fragColor;
+        // Maybe add in textures depending on if new models are made
+        // in vec2 fragTexCoord;
+
+
+        out vec4 fragColorOut;
+
         void main() {
-            fragColor = vec4(1.0, 0.0, 0.0, 1.0); // Solid red
+            // Normalize the normal vector
+            vec3 normal = normalize(fragNormal);
+
+            // Light properties
+            vec3 lightDir = normalize(vec3(0.0, 0.0, 1.0)); // Light coming from camera direction
+            vec3 ambientLight = vec3(0.3); // Ambient light
+
+            // Diffuse lighting
+            float diff = max(dot(normal, lightDir), 0.0);
+            vec3 diffuse = diff * fragColor;
+
+            // Combine ambient and diffuse lighting
+            vec3 finalColor = ambientLight * fragColor + diffuse;
+
+            fragColorOut = vec4(finalColor, 1.0);
+            //fragColorOut = vec4(1.0, 0.0, 0.0, 1.0); // Solid red, fully opaque - for testing purposes
         }
+
     )";
 
     void finalizeRendering(cv::Mat &frame) {
         fbo->release();
+
+        // Fbo to qImage
         QImage glImage = fbo->toImage();
 
+        // Convert QImage to mat
         cv::Mat glFrame(glImage.height(), glImage.width(), CV_8UC4, (void*)glImage.bits(), glImage.bytesPerLine());
+
+        // Save the OpenGL img for debug if needed
+        //cv::imwrite("testAlpha.png", glFrame);
+
+        // RGBA frame
         cv::Mat frameBGRA;
         cv::cvtColor(frame, frameBGRA, cv::COLOR_BGR2BGRA);
 
-        cv::addWeighted(frameBGRA, 1.0, glFrame, 0.5, 0.0, frameBGRA);
+        // Convert images to floats
+        cv::Mat glFrameF, frameBGRAF;
+        glFrame.convertTo(glFrameF, CV_32FC4, 1.0 / 255.0);
+        frameBGRA.convertTo(frameBGRAF, CV_32FC4, 1.0 / 255.0);
 
+        // Split glFrameF into individual channels
+        std::vector<cv::Mat> glChannels(4);
+        cv::split(glFrameF, glChannels);
+
+        // Get alpha channel
+        cv::Mat alphaChannel = glChannels[3];
+
+        // 4 channel alpha mtx
+        std::vector<cv::Mat> alphaChannels(4, alphaChannel);
+        cv::Mat alphaMat;
+        cv::merge(alphaChannels, alphaMat);
+
+        // Alpha blend
+        cv::Mat blendedF = glFrameF.mul(alphaMat) + frameBGRAF.mul(cv::Scalar(1.0, 1.0, 1.0, 1.0) - alphaMat);
+
+        // Convert back BGRA/8 bit
+        blendedF.convertTo(frameBGRA, CV_8UC4, 255.0);
+
+        // Convert back to BGR
         cv::cvtColor(frameBGRA, frame, cv::COLOR_BGRA2BGR);
 
     }
@@ -202,7 +238,6 @@ public:
                 const std::vector<double> &distCoeffs,
                 const cv::Mat &cameraMatrix) override;
 
-    //bool initialize();
     bool loadModels(const std::vector<std::string> &modelNames);
 
 
@@ -212,15 +247,6 @@ private:
     QOpenGLFramebufferObject *fbo;
     ModelLoader modelLoader;
 
-    QOpenGLVertexArrayObject vao;
-    QOpenGLBuffer vbo;
-
-    //std::unordered_map<std::string, ModelData*> models;
-
-    void setupShaders();
-    void setupMatrices(const cv::Mat& cameraMatrix, const std::vector<double>& distCoeffs,
-                       const cv::Vec3d& rvec, const cv::Vec3d& tvec,
-                       int frameWidth, int frameHeight);
 };
 
 #endif //AR_SETTLERS_OPENGLRENDERSTRATEGY_H
