@@ -39,7 +39,7 @@ public:
     std::vector<cv::Point2f> getMarkerCorners() const { return markerCorners; }
 
     const std::string& getName() {
-        const std::string defaultName = "brick"; // Just default to a brick for simplicity
+
         return name.empty() ? defaultName : name;
 
     }
@@ -58,5 +58,6 @@ private:
     cv::Vec3d tvec;
     std::vector<cv::Point2f> markerCorners;
     std::string name;
+    std::string defaultName = "brick";
 };
 #endif //AR_SETTLERS_AROBJECT_H
