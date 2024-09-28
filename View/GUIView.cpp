@@ -119,18 +119,53 @@ void GUIView::updatePlayerInfo(const QMap<QString, QVariant>& playerInfo) {
         QLabel* scoreLabel = panel->findChild<QLabel*>("scoreLabel");
         QLabel* statsLabel = panel->findChild<QLabel*>("statsLabel");
 
+        // Update Username if present
         if (usernameEdit && playerInfo.contains("username")) {
             usernameEdit->setText(playerInfo["username"].toString());
         }
+
+        // Update Score if present
         if (scoreLabel && playerInfo.contains("score")) {
             scoreLabel->setText(QString("Score: %1").arg(playerInfo["score"].toInt()));
         }
+
+        // Update Stats selectively
         if (statsLabel) {
-            QString stats = "Wins: %1\nGames Played: %2\nAvg Score: %3";
-            stats = stats.arg(playerInfo.value("wins", 0).toInt())
-                    .arg(playerInfo.value("gamesPlayed", 0).toInt())
-                    .arg(playerInfo.value("averageScore", 0.0).toDouble(), 0, 'f', 2);
-            statsLabel->setText(stats);
+            // Fetch current stats from the label
+            QString currentStats = statsLabel->text();
+            QString currentWins = "Wins: 0";
+            QString currentGamesPlayed = "Games Played: 0";
+            QString currentAvgScore = "Avg Score: 0.00";
+
+            // Existing stats
+            QStringList lines = currentStats.split('\n');
+            for (const QString& line : lines) {
+                if (line.startsWith("Wins: ")) {
+                    currentWins = line;
+                } else if (line.startsWith("Games Played: ")) {
+                    currentGamesPlayed = line;
+                } else if (line.startsWith("Avg Score: ")) {
+                    currentAvgScore = line;
+                }
+            }
+
+            // Update only if new values are provided
+            if (playerInfo.contains("wins")) {
+                currentWins = QString("Wins: %1").arg(playerInfo["wins"].toInt());
+            }
+            if (playerInfo.contains("gamesPlayed")) {
+                currentGamesPlayed = QString("Games Played: %1").arg(playerInfo["gamesPlayed"].toInt());
+            }
+            if (playerInfo.contains("averageScore")) {
+                currentAvgScore = QString("Avg Score: %1").arg(playerInfo["averageScore"].toDouble(), 0, 'f', 2);
+            }
+
+            // Reconstruct stats string
+            QString updatedStats = QString("%1\n%2\n%3")
+                    .arg(currentWins)
+                    .arg(currentGamesPlayed)
+                    .arg(currentAvgScore);
+            statsLabel->setText(updatedStats);
         }
     }
 }
