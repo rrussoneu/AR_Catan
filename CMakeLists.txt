@@ -30,7 +30,7 @@ add_executable(AR_Settlers main.cpp
         Controller/Video/VideoCaptureThread.h
         View/GUIView.cpp
         View/GUIView.h
-        Controller/Video/RTSPInput.h
+        Controller/Video/RPInput.h
         AR_Objs/ARObject.h
         AR_Objs/Aruco/ArucoObject.h
         AR_Objs/Aruco/HomographyObj.h
@@ -84,6 +84,10 @@ add_executable(AR_Settlers main.cpp
         AR_Objs/Rendering/OpenCVRenderStrategy.h
         AR_Objs/Rendering/OpenGLRenderStrategy.cpp
         AR_Objs/Rendering/ModelData.h
+        Model/Database/DatabaseManager.cpp
+        Model/Database/DatabaseManager.h
+        Model/Database/PlayerService.cpp
+        Model/Database/PlayerService.h
 
 )
 
