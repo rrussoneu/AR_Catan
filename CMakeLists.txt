@@ -12,6 +12,7 @@ find_package(Qt6 COMPONENTS Widgets OpenGLWidgets REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(SQLite3 REQUIRED)
+find_package(assimp REQUIRED)
 
 include_directories(
         ${PROJECT_SOURCE_DIR}/include
@@ -20,6 +21,7 @@ include_directories(
         ${Qt6OpenGLWidgets_INCLUDE_DIRS}
         ${OPENGL_INCLUDE_DIR}
         ${SQLite3_INCLUDE_DIRS}
+        ${ASSIMP_INCLUDE_DIRS}
 )
 
 add_executable(AR_Settlers main.cpp
@@ -75,6 +77,14 @@ add_executable(AR_Settlers main.cpp
         Controller/PlayerInfoBuilder.h
         AR_Objs/Rendering/RenderStrategy.h
         AR_Objs/Rendering/OpenCVRenderStrategy.h
+        Config.h
+
+        AR_Objs/Rendering/ModelLoader.cpp
+        AR_Objs/Rendering/ModelLoader.h
+        AR_Objs/Rendering/OpenCVRenderStrategy.h
+        AR_Objs/Rendering/OpenGLRenderStrategy.cpp
+        AR_Objs/Rendering/ModelData.h
+
 )
 
 target_link_libraries(AR_Settlers
@@ -82,7 +92,8 @@ target_link_libraries(AR_Settlers
         Qt6::OpenGLWidgets
         ${OpenCV_LIBS}
         ${OPENGL_LIBRARIES}
-        ${SQLite3_LIBRARIES})
+        ${SQLite3_LIBRARIES}
+        assimp::assimp)
 
 # Set RPATH
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
