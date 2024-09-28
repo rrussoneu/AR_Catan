@@ -13,6 +13,7 @@ find_package(OpenCV REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(SQLite3 REQUIRED)
 find_package(assimp REQUIRED)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Sql)
 
 include_directories(
         ${PROJECT_SOURCE_DIR}/include
@@ -20,7 +21,6 @@ include_directories(
         ${Qt6Widgets_INCLUDE_DIRS}
         ${Qt6OpenGLWidgets_INCLUDE_DIRS}
         ${OPENGL_INCLUDE_DIR}
-        ${SQLite3_INCLUDE_DIRS}
         ${ASSIMP_INCLUDE_DIRS}
 )
 
@@ -90,9 +90,9 @@ add_executable(AR_Settlers main.cpp
 target_link_libraries(AR_Settlers
         Qt6::Widgets
         Qt6::OpenGLWidgets
+        Qt6::Sql
         ${OpenCV_LIBS}
         ${OPENGL_LIBRARIES}
-        ${SQLite3_LIBRARIES}
         assimp::assimp)
 
 # Set RPATH
