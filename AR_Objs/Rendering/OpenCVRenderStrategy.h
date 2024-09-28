@@ -21,7 +21,7 @@ public:
 
     int getType() override {return 1;}
 
-    bool initialize() override {return true;}
+    bool initialize(int frameWidth, int frameHeight) override {return true;}
 
     void render(ARObject *object, cv::Mat &frame,
                 const std::vector<cv::Point2f> &markerCorners,

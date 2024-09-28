@@ -56,8 +56,16 @@ ProcessingThread::~ProcessingThread() {
 
 void ProcessingThread::enqueueFrame(const cv::Mat &frame) {
     QMutexLocker locker(&mutex);
-    frameQueue.enqueue(frame.clone());
-    frameAvailable.wakeOne();
+    const int MAX_QUEUE_SIZE = 5; // Adjust as needed
+    if (frameQueue.size() < MAX_QUEUE_SIZE) {
+        frameQueue.enqueue(frame.clone());
+        frameAvailable.wakeOne();
+    } else {
+        // Replace the oldest frame
+        frameQueue.dequeue();
+        frameQueue.enqueue(frame.clone());
+        frameAvailable.wakeOne();
+    }
 }
 
 void ProcessingThread::run() {
@@ -95,12 +103,36 @@ void ProcessingThread::run() {
     QOpenGLFunctions *glFunctions = glContext->functions();
     glFunctions->initializeOpenGLFunctions();
 
-    // Create and init OpenGLRenderStrategy
+    // Need first frame for info for fbo
+    cv::Mat firstFrame;
+    {
+        QMutexLocker locker(&mutex);
+        while (frameQueue.isEmpty() && !stopThread) {
+            frameAvailable.wait(&mutex);
+        }
+        if (stopThread) {
+            return;
+        }
+        firstFrame = frameQueue.dequeue();
+    }
+
+    if (firstFrame.empty()) {
+        qWarning() << "Failed to retrieve the first frame";
+        return;
+    }
+
+    int frameWidth = firstFrame.cols;
+    int frameHeight = firstFrame.rows;
+
+    // Create and initialize OpenGLRenderStrategy with frame dimensions
     renderStrategy = new OpenGLRenderStrategy(glContext);
-    if (!renderStrategy->initialize()) {
+    if (!renderStrategy->initialize(frameWidth, frameHeight)) {
         qWarning() << "Failed to initialize OpenGL render strategy";
         return;
     }
+
+    // Process the first frame
+    processFrame(firstFrame);
 
     while (true) {
         cv::Mat frame;

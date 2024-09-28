@@ -37,7 +37,8 @@ void OpenGLRenderStrategy::render(ARObject *object, cv::Mat &frame,
     std::string modelName = object->getName();
 
     // Get data for object model
-    ModelData *modelData = modelLoader.getModel(modelName);
+    //ModelData *modelData = modelLoader.getModel(modelName);
+    ModelData *modelData = models.at(modelName);
     if (!modelData) {
         qWarning() << "Model not found:" << QString::fromStdString(modelName);
         return;
@@ -76,6 +77,7 @@ bool OpenGLRenderStrategy::loadModels(const std::vector<std::string>& modelNames
             qWarning() << "Failed to load model:" << QString::fromStdString(name);
             return false;
         }
+        models[name] = modelLoader.getModel(name);
     }
     return true;
 }

@@ -20,7 +20,7 @@ public:
                         const cv::Vec3d &rvec, const cv::Vec3d &tvec,
                         const std::vector<double> &distCoeffs,
                         const cv::Mat &cameraMatrix) = 0;
-    virtual bool initialize() = 0;
+    virtual bool initialize(int frameWidth, int frameHeight) = 0;
 
     virtual int getType() = 0;
 };

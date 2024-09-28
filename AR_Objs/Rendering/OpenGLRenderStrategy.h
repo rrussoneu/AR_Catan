@@ -26,13 +26,7 @@ public:
     }
 
     void prepareForRendering(const cv::Mat &frame) {
-        if (!fbo || fbo->size() != QSize(frame.cols, frame.rows)) {
-            if (fbo) delete fbo;
-            QOpenGLFramebufferObjectFormat format;
-            format.setAttachment(QOpenGLFramebufferObject::CombinedDepthStencil);
-            fbo = new QOpenGLFramebufferObject(frame.cols, frame.rows, format);
-            //qDebug() << "Created new fbo size:" << fbo->size();
-        }
+
 
         if (!fbo->bind()) {
             qWarning() << "Failed to bind FBO in prepareForRendering";
@@ -40,16 +34,12 @@ public:
         }
 
         // OpenGL prep
-        glViewport(0, 0, frame.cols, frame.rows);
-        glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LESS);
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        // Set viewport to match FBO size
+        glViewport(0, 0, fbo->width(), fbo->height());
+
+        // Clear buffers
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        // Disable blending
-        glDisable(GL_BLEND);
-        // Enable face culling
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
+
     }
 
 
@@ -106,7 +96,9 @@ public:
         return coordinateTransform * modelView;
     }
 
-    bool initialize() {
+
+
+    bool initialize(int frameWidth, int frameHeight) {
         initializeOpenGLFunctions();
 
         if (!shaderProgram.addShaderFromSourceCode(QOpenGLShader::Vertex, vertexShaderSource) ||
@@ -128,12 +120,24 @@ public:
             return false;
         }
 
+        QOpenGLFramebufferObjectFormat format;
+        format.setAttachment(QOpenGLFramebufferObject::CombinedDepthStencil);
+        fbo = new QOpenGLFramebufferObject(frameWidth, frameHeight, format);
+
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
+        glDisable(GL_BLEND);
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+
 
 
         return true;
     }
 
+
     // Ignore the shader files - just use these for now at least
+
     const char* vertexShaderSource = R"(
         #version 330 core
         layout(location = 0) in vec3 aPosition;
@@ -246,6 +250,7 @@ private:
     QOpenGLShaderProgram shaderProgram;
     QOpenGLFramebufferObject *fbo;
     ModelLoader modelLoader;
+    std::unordered_map<std::string, ModelData*> models;
 
 };
 
