@@ -18,7 +18,16 @@ public:
         static OpenCVRenderStrategy instance; // Thread safe from c++ 11 on
         return instance;
     }
-    void render(ArucoObject *object, cv::Mat &frame, const std::vector<cv::Point2f> &markerCorners, const cv::Vec3d &rvec, const cv::Vec3d &tvec, const std::vector<double> &distCoeffs, const cv::Mat &cameraMatrix) override {
+
+    int getType() override {return 1;}
+
+    bool initialize() override {return true;}
+
+    void render(ARObject *object, cv::Mat &frame,
+                const std::vector<cv::Point2f> &markerCorners,
+                const cv::Vec3d &rvec, const cv::Vec3d &tvec,
+                const std::vector<double> &distCoeffs,
+                const cv::Mat &cameraMatrix) override {
         std::vector<cv::Point2f> imgPoints; // 2D calculated points to draw
         std::vector<std::vector<cv::Point3f>> polys = object->getPolygons();
         for (int i = 0; i < polys.size(); ++i) {

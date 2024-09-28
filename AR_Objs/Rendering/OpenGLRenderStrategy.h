@@ -21,6 +21,10 @@ public:
     OpenGLRenderStrategy(QOpenGLContext* context);
     ~OpenGLRenderStrategy();
 
+    int getType() override {
+        return 2;
+    }
+
     void prepareForRendering(const cv::Mat &frame) {
         if (!fbo || fbo->size() != QSize(frame.cols, frame.rows)) {
             if (fbo) delete fbo;
