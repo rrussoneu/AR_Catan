@@ -162,17 +162,23 @@ void ProcessingThread::processFrame(const cv::Mat &frame) {
 
             if (arObject->getRenderStrategy() == nullptr) {
                 // Assign the OpenGLRenderStrategy
-                //arObject->setRenderStrategy(renderStrategy);
+                arObject->setRenderStrategy(renderStrategy);
             }
 
             solvePnP(obj_points, markerCorners.at(i), cameraMatrix, distCoeffs, rvecs.at(i), tvecs.at(i), cv::SOLVEPNP_ITERATIVE);
 
             cv::drawFrameAxes(processedFrame, cameraMatrix, distCoeffs, rvecs.at(i), tvecs.at(i), marker_length, 2);
+            //if (arObject->getRenderStrategy() )
             //arObject->render(processedFrame, markerCorners.at(i), rvecs.at(i), tvecs.at(i), distCoeffs, cameraMatrix);
 
             // Just do OpenGL render for testing
-            static_cast<OpenGLRenderStrategy*>(renderStrategy)->renderMarker(
-                    rvecs.at(i), tvecs.at(i), distCoeffs, cameraMatrix);
+            if (arObject->getRenderStrategy()->getType() == 1) {
+                arObject->render(processedFrame, markerCorners.at(i), rvecs.at(i), tvecs.at(i), distCoeffs, cameraMatrix);
+            }else {
+                static_cast<OpenGLRenderStrategy*>(renderStrategy)->renderMarker(
+                        rvecs.at(i), tvecs.at(i), distCoeffs, cameraMatrix);
+            }
+
 
         }
 
