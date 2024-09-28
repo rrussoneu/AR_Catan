@@ -11,11 +11,11 @@
 
 Controller::Controller(GameModel *model, QObject *parent)
         : QObject(parent), model(model), currentInput(nullptr), captureThread(nullptr),
-          cameraInput(new CameraInput()), rtspInput(nullptr), processingThread(new ProcessingThread(model)) {
+          cameraInput(new CameraInput()), rpInput(nullptr), processingThread(new ProcessingThread(model)) {
     // Initialize players
     QStringList colors = {"blue", "red", "orange", "white"};
     for (const QString& color : colors) {
-        model->addPlayer(Player(color.toStdString()));
+        model->addPlayer(color, Player());
     }
 
     connect(processingThread, &ProcessingThread::frameProcessed, this, &Controller::onFrameProcessed);
@@ -27,7 +27,7 @@ Controller::Controller(GameModel *model, QObject *parent)
 Controller::~Controller() {
     stopCurrentInput();
     delete cameraInput;
-    if (rtspInput) delete rtspInput;
+    if (rpInput) delete rpInput;
 }
 
 void Controller::stopCurrentInput() {
@@ -60,17 +60,17 @@ void Controller::switchToCamera() {
 void Controller::switchToRTSP(const QString &rtspUrl) {
     stopCurrentInput();
 
-    if (rtspInput) {
-        delete rtspInput;
+    if (rpInput) {
+        delete rpInput;
     }
-    rtspInput = new RTSPInput(rtspUrl.toStdString());
+    rpInput = new RPInput(rtspUrl.toStdString());
 
-    if (!rtspInput->startStream()) {
+    if (!rpInput->startStream()) {
         qWarning("RTSP connection failed.");
         return;
     }
 
-    currentInput = rtspInput;
+    currentInput = rpInput;
     captureThread = new VideoCaptureThread(currentInput);
     connect(captureThread, &VideoCaptureThread::frameCaptured, this, &Controller::processFrame);
     captureThread->start();
@@ -92,9 +92,7 @@ void Controller::rollDice() {
 }
 
 void Controller::finishGame() {
-    // Handle game finish logic
-    QMessageBox::information(nullptr, "Game Finished", "The game has ended.");
-    // Save stats or reset game state or whatever
+    model->finishGame();
 }
 
 void Controller::updatePlayerUsername(const QString &color, const QString &username) {
