@@ -1,0 +1,41 @@
+//
+// Created by Raphael Russo on 9/28/24.
+//
+
+#ifndef AR_SETTLERS_DATABASEMANAGER_H
+#define AR_SETTLERS_DATABASEMANAGER_H
+#pragma once
+
+
+#include <QObject>
+#include <QSqlDatabase>
+#include <QMutex>
+#include "../Player.h"
+
+class DatabaseManager : public QObject{
+Q_OBJECT
+public:
+    static DatabaseManager& getInstance();
+    ~DatabaseManager();
+
+    // Connection
+    bool openDatabase(const QString &path);
+    void closeDatabase();
+
+    // Repository
+    Player getPlayerStats(const QString &username);
+    bool updatePlayerStats(const Player &player);
+    bool addNewPlayer(const Player &player);
+
+private:
+    explicit DatabaseManager(QObject *parent = nullptr);
+    DatabaseManager(const DatabaseManager&) = default;
+    DatabaseManager& operator=(const DatabaseManager&) = delete;
+
+    QSqlDatabase db;
+    static QMutex mutex;
+
+};
+
+
+#endif //AR_SETTLERS_DATABASEMANAGER_H
