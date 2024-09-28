@@ -10,7 +10,7 @@
 
 class ResourceCard : public ArucoObject {
 public:
-    ResourceCard(int markerID) : ArucoObject(markerID) {}
+    ResourceCard(int markerID, RenderStrategy *renderStrategy = nullptr, const std::string &objectName = "") : ArucoObject(markerID, renderStrategy, objectName) {}
 };
 
 #endif //AR_SETTLERS_RESOURCECARD_H

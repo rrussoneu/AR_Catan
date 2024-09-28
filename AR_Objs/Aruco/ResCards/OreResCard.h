@@ -7,10 +7,11 @@
 #pragma once
 #include "ResourceCard.h"
 #include "../../ARObjectFactory.h"
+#include "../../Rendering/OpenGLRenderStrategy.h"
 
 class OreResCard : public ResourceCard {
 public:
-    OreResCard(int markerID) : ResourceCard(markerID) {}
+    OreResCard(int markerID, RenderStrategy *renderStrategy = nullptr, const std::string &objectName = "ore") : ResourceCard(markerID, renderStrategy, objectName) {}
 
 
 
@@ -33,6 +34,10 @@ public:
         // Return empty or default value
         static std::vector<cv::Scalar> emptyColors;
         return emptyColors;
+    }
+
+    std::string getModelName() {
+        return "Ore";
     }
 
 };

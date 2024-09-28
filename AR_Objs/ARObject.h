@@ -13,7 +13,7 @@ class RenderStrategy;
 
 class ARObject {
 public:
-    ARObject(RenderStrategy* strategy = nullptr) : renderStrategy(strategy) {}
+    ARObject(RenderStrategy *strategy = nullptr, const std::string &objectName = "") : renderStrategy(strategy), name(objectName) {}
     virtual ~ARObject() = default;
 
 
@@ -39,8 +39,9 @@ public:
     std::vector<cv::Point2f> getMarkerCorners() const { return markerCorners; }
 
     const std::string& getName() {
+        const std::string defaultName = "brick"; // Just default to a brick for simplicity
+        return name.empty() ? defaultName : name;
 
-        return name;
     }
 
     RenderStrategy* getRenderStrategy() const {
@@ -51,11 +52,11 @@ public:
     virtual const std::vector<cv::Scalar>& getColors() const = 0;
 protected:
     RenderStrategy *renderStrategy;
+
 private:
     cv::Vec3d rvec;
     cv::Vec3d tvec;
     std::vector<cv::Point2f> markerCorners;
-    std::string name = "ore";
-
+    std::string name;
 };
 #endif //AR_SETTLERS_AROBJECT_H

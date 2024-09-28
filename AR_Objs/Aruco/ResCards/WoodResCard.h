@@ -10,7 +10,7 @@
 
 class WoodResCard : public ResourceCard {
 public:
-    WoodResCard(int markerID) : ResourceCard(markerID) {}
+    WoodResCard(int markerID, RenderStrategy *renderStrategy = nullptr, const std::string &objectName = "wood") : ResourceCard(markerID, renderStrategy, objectName) {}
 
 
 

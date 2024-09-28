@@ -10,7 +10,7 @@
 
 class WheatHex : public HexTile {
 public:
-    WheatHex(int markerID) : HexTile(markerID) {}
+    WheatHex(int markerID, RenderStrategy *renderStrategy = nullptr, const std::string &objectName = "wheat") : HexTile(markerID, renderStrategy, objectName) {}
 
 
 

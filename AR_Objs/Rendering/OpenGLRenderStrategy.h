@@ -113,11 +113,14 @@ public:
         // Wood, brick, wheat, maybe longest road / largest army
         std::vector<std::string> modelNames = {
                 "ore",
-                "sheep"
+                "wool",
+                "wood",
+                "wheat",
+                "brick"
         };
         if (!loadModels(modelNames)) {
             qWarning() << "Failed to load models.";
-            return false;
+            //return false;
         }
 
         QOpenGLFramebufferObjectFormat format;

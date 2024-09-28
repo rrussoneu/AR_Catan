@@ -75,9 +75,11 @@ bool OpenGLRenderStrategy::loadModels(const std::vector<std::string>& modelNames
         std::string filePath = "AR_Objs/Rendering/Models/" + name + ".obj"; // Adjust the path as needed
         if (!modelLoader.loadModel(name, filePath)) {
             qWarning() << "Failed to load model:" << QString::fromStdString(name);
-            return false;
+            //return false;
+        } else {
+            models[name] = modelLoader.getModel(name);
         }
-        models[name] = modelLoader.getModel(name);
+
     }
     return true;
 }

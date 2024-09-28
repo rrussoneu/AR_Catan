@@ -10,7 +10,7 @@
 
 class BrickResCard : public ResourceCard {
 public:
-    BrickResCard(int markerID) : ResourceCard(markerID) {}
+    BrickResCard(int markerID, RenderStrategy *renderStrategy = nullptr, const std::string &objectName = "brick") : ResourceCard(markerID, renderStrategy, objectName) {}
 
 
     static ArucoObject* create(int markerID) {

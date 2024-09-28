@@ -13,8 +13,8 @@
 
 class ArucoObject : public ARObject {
 public:
-    ArucoObject(int markerID, RenderStrategy *strategy= nullptr)
-            : markerID(markerID), ARObject(strategy) {}
+    ArucoObject(int markerID, RenderStrategy *strategy= nullptr, const std::string &objectName = "")
+            : markerID(markerID), ARObject(strategy, objectName) {}
 
     virtual ~ArucoObject() = default;
 

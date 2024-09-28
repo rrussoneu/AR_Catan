@@ -56,7 +56,7 @@ ProcessingThread::~ProcessingThread() {
 
 void ProcessingThread::enqueueFrame(const cv::Mat &frame) {
     QMutexLocker locker(&mutex);
-    const int MAX_QUEUE_SIZE = 5; // Adjust as needed
+    const int MAX_QUEUE_SIZE = 5; // Adjust as needed - five seems to be good for now
     if (frameQueue.size() < MAX_QUEUE_SIZE) {
         frameQueue.enqueue(frame.clone());
         frameAvailable.wakeOne();
@@ -128,7 +128,7 @@ void ProcessingThread::run() {
     renderStrategy = new OpenGLRenderStrategy(glContext);
     if (!renderStrategy->initialize(frameWidth, frameHeight)) {
         qWarning() << "Failed to initialize OpenGL render strategy";
-        return;
+        //return;
     }
 
     // Process the first frame

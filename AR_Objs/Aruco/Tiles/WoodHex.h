@@ -10,7 +10,7 @@
 
 class WoodHex : public HexTile {
 public:
-    WoodHex(int markerID) : HexTile(markerID) {}
+    WoodHex(int markerID, RenderStrategy *renderStrategy = nullptr, const std::string &objectName = "wood") : HexTile(markerID, renderStrategy, objectName) {}
 
 
     static ArucoObject* create(int markerID) {
