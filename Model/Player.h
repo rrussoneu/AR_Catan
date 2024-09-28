@@ -33,6 +33,8 @@ public:
     void incrementScore();
     void decrementScore();
     float getAverageScore() const;
+    int getTotalScore() const;
+    void setTotalScore(int total);
 
     // Color - maybe remove this at some point idk if necessary or make an enum
     // Can just do a class for color w enum and scalar value in case it is needed multiple places, would be better design
@@ -43,7 +45,7 @@ private:
     int wins;
     int gamesPlayed;
     int score;
-    float averageScore;
+    int totalScore;
     std::string color; // Come back to color decision
 
 

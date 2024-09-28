@@ -4,7 +4,7 @@
 
 #include "Player.h"
 
-Player::Player(const std::string &color) : color(color), username("guest"), score(0), wins(0), averageScore(0.0), gamesPlayed(0) {}
+Player::Player(const std::string &color) : color(color), username("guest"), score(0), wins(0), totalScore(0), gamesPlayed(0) {}
 
 std::string Player::getUsername() const {
     return username;
@@ -50,7 +50,16 @@ void Player::decrementScore() {
 
 float Player::getAverageScore() const {
     // Once database added this can be implemented
-    return averageScore;
+    return gamesPlayed == 0 ? 0.0 : (float) totalScore / gamesPlayed;
+}
+
+
+void Player::setTotalScore(int total) {
+    totalScore = score;
+}
+
+int Player::getTotalScore() const {
+    return totalScore;
 }
 
 std::string Player::getColor() const {
