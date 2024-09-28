@@ -6,8 +6,10 @@
 #define AR_SETTLERS_GAMEMODEL_H
 #pragma once
 #include <unordered_map>
+#include <QString>
 #include "../AR_Objs/ARObject.h"
 #include "Player.h"
+#include <QMap>
 
 class GameModel {
 public:
@@ -23,13 +25,17 @@ public:
         return nullptr;
     }
 
-    void addPlayer(const Player &player);
-    Player *getPlayer(const std::string &color);
+    QList<Player*> getAllPlayers();
+
+    void addPlayer(const QString &color, const Player &player);
+    Player* getPlayer(const QString &color);
 
     int rollDice();
 
+    void finishGame();
+
 private:
     std::unordered_map<int, ARObject*> objectMap;
-    std::unordered_map<std::string, Player> players;
+    QMap<QString, Player> players;
 };
 #endif //AR_SETTLERS_GAMEMODEL_H
