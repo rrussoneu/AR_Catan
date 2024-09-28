@@ -13,6 +13,7 @@ find_package(OpenCV REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(SQLite3 REQUIRED)
 find_package(assimp REQUIRED)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Sql)
 
 include_directories(
         ${PROJECT_SOURCE_DIR}/include
@@ -20,7 +21,6 @@ include_directories(
         ${Qt6Widgets_INCLUDE_DIRS}
         ${Qt6OpenGLWidgets_INCLUDE_DIRS}
         ${OPENGL_INCLUDE_DIR}
-        ${SQLite3_INCLUDE_DIRS}
         ${ASSIMP_INCLUDE_DIRS}
 )
 
@@ -30,7 +30,7 @@ add_executable(AR_Settlers main.cpp
         Controller/Video/VideoCaptureThread.h
         View/GUIView.cpp
         View/GUIView.h
-        Controller/Video/RTSPInput.h
+        Controller/Video/RPInput.h
         AR_Objs/ARObject.h
         AR_Objs/Aruco/ArucoObject.h
         AR_Objs/Aruco/HomographyObj.h
@@ -84,15 +84,19 @@ add_executable(AR_Settlers main.cpp
         AR_Objs/Rendering/OpenCVRenderStrategy.h
         AR_Objs/Rendering/OpenGLRenderStrategy.cpp
         AR_Objs/Rendering/ModelData.h
+        Model/Database/DatabaseManager.cpp
+        Model/Database/DatabaseManager.h
+        Model/Database/PlayerService.cpp
+        Model/Database/PlayerService.h
 
 )
 
 target_link_libraries(AR_Settlers
         Qt6::Widgets
         Qt6::OpenGLWidgets
+        Qt6::Sql
         ${OpenCV_LIBS}
         ${OPENGL_LIBRARIES}
-        ${SQLite3_LIBRARIES}
         assimp::assimp)
 
 # Set RPATH

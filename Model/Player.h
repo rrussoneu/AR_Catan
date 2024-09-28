@@ -7,17 +7,18 @@
 
 #pragma once
 #include <string>
+#include <QString>
 
 
 class Player {
 public:
-    Player(const std::string &color);
+    Player();
 
     // Getters and Setters
 
     // Username
-    std::string getUsername() const;
-    void setUsername(const std::string &username);
+    QString getUsername() const;
+    void setUsername(const QString &username);
 
     // Wins
     int getWins() const;
@@ -33,18 +34,21 @@ public:
     void incrementScore();
     void decrementScore();
     float getAverageScore() const;
+    int getTotalScore() const;
+    void setTotalScore(int total);
+
 
     // Color - maybe remove this at some point idk if necessary or make an enum
     // Can just do a class for color w enum and scalar value in case it is needed multiple places, would be better design
-    std::string getColor() const;
+    //std::string getColor() const;
 
 private:
-    std::string username;
+    QString username;
     int wins;
     int gamesPlayed;
     int score;
-    float averageScore;
-    std::string color; // Come back to color decision
+    int totalScore;
+
 
 
 

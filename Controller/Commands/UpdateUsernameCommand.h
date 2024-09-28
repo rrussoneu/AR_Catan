@@ -8,6 +8,7 @@
 #include "Command.h"
 #include "../../Model/GameModel.h"
 #include "../PlayerInfoBuilder.h"
+#include "../../Model/Database/PlayerService.h"
 
 class UpdateUsernameCommand : public Command {
 private:
@@ -20,12 +21,22 @@ public:
             : model(model), color(color), username(username) {}
 
     QMap<QString, QVariant> run() override {
-        Player *player = model->getPlayer(color.toStdString());
+        Player *player = model->getPlayer(color);
         if (player) {
-            player->setUsername(username.toStdString());
+            player->setUsername(username);
+            PlayerService playerService;
+            if (!playerService.fetchOrCreatePlayer(*player)) {
+                qWarning("Failed to fetch or create player!!!");
+
+            }
+
             return PlayerInfoBuilder()
                     .setColor(color)
                     .setUsername(username)
+                    .setAverageScore(player->getAverageScore())
+                    .setScore(player->getScore())
+                    .setWins(player->getWins())
+                    .setGamesPlayed(player->getGamesPlayed())
                     .build();
         }
         return {};

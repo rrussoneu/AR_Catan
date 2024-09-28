@@ -2,17 +2,18 @@
 // Created by Raphael Russo on 9/23/24.
 //
 
+#include <QMessageBox>
 #include "GameModel.h"
+#include "Database/DatabaseManager.h"
 
 
-void GameModel::addPlayer(const Player &player) {
-    players.emplace(player.getColor(), player);
+void GameModel::addPlayer(const QString &color, const Player &player) {
+    players.insert(color, player);
 }
 
-Player* GameModel::getPlayer(const std::string &color) {
-    auto it = players.find(color);
-    if (it != players.end()) {
-        return &it->second;
+Player* GameModel::getPlayer(const QString &color) {
+    if (players.contains(color)) {
+        return &players[color];
     }
     return nullptr;
 }
@@ -26,4 +27,70 @@ int GameModel::rollDice() {
     }
     // 2 to 12
     return (std::rand() % 11) + 2;
+}
+
+QList<Player*> GameModel::getAllPlayers() {
+    QList<Player*> playerList;
+    for (auto it = players.begin(); it != players.end(); ++it) {
+        playerList.append(&it.value());
+    }
+    return playerList;
+}
+
+void GameModel::finishGame() {
+    // Retrieve all players from the model
+    QList<Player*> allPlayers = getAllPlayers();
+
+    if (allPlayers.isEmpty()) {
+        QMessageBox::warning(nullptr, "No Players", "There are no players to process.");
+        return;
+    }
+
+    // Determine the winner(s)
+    int highestScore = INT_MIN;
+    QList<Player*> winners;
+
+    for (Player* player : allPlayers) {
+        if (player->getScore() > highestScore) {
+            highestScore = player->getScore();
+            winners.clear();
+            winners.append(player);
+        } else if (player->getScore() == highestScore) {
+            winners.append(player); // Handle tie in event of game ending early or something
+        }
+    }
+
+    // Update stats for all players
+    for (Player* player : allPlayers) {
+
+        //DatabaseManager::getInstance().getPlayerStats(*player);
+        if (player->getUsername() == "guest") {
+            qWarning("Guest player being skipped.");
+            continue;
+        }
+
+        // Increment games played
+        player->setGamesPlayed(player->getGamesPlayed() + 1);
+
+        // Update total score (add current game score)
+        player->setTotalScore(player->getTotalScore() + player->getScore());
+
+        // Check if player is a winner
+        if (winners.contains(player)) {
+            player->setWins(player->getWins() + 1);
+        }
+
+        // Save updated stats to the database
+        if (!DatabaseManager::getInstance().updatePlayerStats(*player)) {
+            QMessageBox::warning(nullptr, "Database Error", "Failed to update stats for player: " + player->getUsername());
+        }
+    }
+
+    // Display a message with the winner(s)
+    QString winnerNames;
+    for (Player* winner : winners) {
+        winnerNames += winner->getUsername() + " ";
+    }
+
+    QMessageBox::information(nullptr, "Game Finished", "The game has ended.\nWinner(s): " + winnerNames);
 }

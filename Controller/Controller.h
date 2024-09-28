@@ -12,7 +12,7 @@
 #include "Video/VideoInput.h"
 #include "Video/VideoCaptureThread.h"
 #include "../Model/GameModel.h"
-#include "Video/RTSPInput.h"
+#include "Video/RPInput.h"
 #include "Video/CameraInput.h"
 #include "Processing/ProcessingThread.h"
 #include "Commands/Command.h"
@@ -70,8 +70,9 @@ private:
     VideoCaptureThread *captureThread;
     ProcessingThread *processingThread;
 
+
     CameraInput *cameraInput;  // Built in cam
-    RTSPInput *rtspInput;      // RPi input --- COME BACK TO THIS LATER WHEN I HAVE THE RASPBERRY PI ON ME
+    RPInput *rpInput;      // RPi input --- COME BACK TO THIS LATER WHEN I HAVE THE RASPBERRY PI ON ME
 
     void stopCurrentInput();
 
