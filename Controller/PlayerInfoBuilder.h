@@ -32,7 +32,7 @@ public:
         gamesPlayed = value;
         return *this;
     }
-    PlayerInfoBuilder& setAverageScore(double value) {
+    PlayerInfoBuilder& setAverageScore(float value) {
         averageScore = value;
         return *this;
     }
@@ -54,6 +54,6 @@ private:
     std::optional<int> score;
     std::optional<int> wins;
     std::optional<int> gamesPlayed;
-    std::optional<double> averageScore;
+    std::optional<float> averageScore;
 };
 #endif //AR_SETTLERS_PLAYERINFOBUILDER_H

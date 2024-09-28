@@ -3,17 +3,17 @@
 // A class for rtsp input
 //
 
-#ifndef AR_SETTLERS_RTSPINPUT_H
-#define AR_SETTLERS_RTSPINPUT_H
+#ifndef AR_SETTLERS_RPINPUT_H
+#define AR_SETTLERS_RPINPUT_H
 
 #pragma once
 #include "VideoInput.h"
 #include <opencv2/videoio.hpp>
 
-class RTSPInput : public VideoInput {
+class RPInput : public VideoInput {
 public:
-    RTSPInput(const std::string& rtspUrl) : rtspUrl(rtspUrl) {}
-    ~RTSPInput() { stopStream(); }
+    RPInput(const std::string& rtspUrl) : rtspUrl(rtspUrl) {}
+    ~RPInput() { stopStream(); }
 
     bool startStream() override {
         if (!rtspStream.open(rtspUrl)) {
@@ -45,4 +45,4 @@ private:
     cv::VideoCapture rtspStream;
 };
 
-#endif //AR_SETTLERS_RTSPINPUT_H
+#endif //AR_SETTLERS_RPINPUT_H
