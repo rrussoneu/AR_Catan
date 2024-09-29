@@ -21,6 +21,9 @@ Controller::Controller(GameModel *model, QObject *parent)
     }
 
     connect(processingThread, &ProcessingThread::frameProcessed, this, &Controller::onFrameProcessed);
+    connect(model, &GameModel::errorOccurred, this, &Controller::handleError);
+    connect(processingThread, &ProcessingThread::errorOccurred, this, &Controller::handleError);
+
     processingThread->start();
 
     switchToCamera();

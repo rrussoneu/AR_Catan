@@ -54,6 +54,8 @@ signals:
      */
     void frameProcessed(const cv::Mat& frame);
 
+    // Signal for errors
+    void errorOccurred(const QString &message);
 
 protected:
 

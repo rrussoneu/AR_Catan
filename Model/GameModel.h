@@ -33,6 +33,10 @@ public:
     int rollDice();
 
     void finishGame();
+signals:
+
+    // Signal for errors
+    void errorOccurred(const QString &message);
 
 private:
     std::unordered_map<int, ARObject*> objectMap;

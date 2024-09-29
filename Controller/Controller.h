@@ -50,6 +50,9 @@ public slots:
     void decrementPlayerScore(const QString &color);
     void onFrameProcessed(const cv::Mat &frame);
 
+    // Slot for receiving error messages
+    void handleError(const QString &message);
+
 signals:
     // Signal to send processed frame to View
     void frameReady(const cv::Mat &frame);
@@ -62,6 +65,9 @@ signals:
     // Signal for player update
     //void playerUpdated(const QString& color, const Player& player);
     void playerUpdated(const QMap<QString, QVariant> &playerInfo);
+
+    // Signal to errors to the view
+    void displayError(const QString &message);
 
 
 private:
