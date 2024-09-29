@@ -72,9 +72,11 @@ private:
 
 
     CameraInput *cameraInput;  // Built in cam
-    NetworkInput *rpInput;      // RPi input --- COME BACK TO THIS LATER WHEN I HAVE THE RASPBERRY PI ON ME
+    NetworkInput *rpInput;
 
     void stopCurrentInput();
+
+    void getParams();
 
     void runCommand(std::unique_ptr<Command> command) {
         QMap<QString, QVariant> result = command->run();
