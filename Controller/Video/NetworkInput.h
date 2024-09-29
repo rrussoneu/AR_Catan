@@ -3,20 +3,20 @@
 // A class for rtsp input
 //
 
-#ifndef AR_SETTLERS_RPINPUT_H
-#define AR_SETTLERS_RPINPUT_H
+#ifndef AR_SETTLERS_NETWORKINPUT_H
+#define AR_SETTLERS_NETWORKINPUT_H
 
 #pragma once
 #include "VideoInput.h"
 #include <opencv2/videoio.hpp>
 
-class RPInput : public VideoInput {
+class NetworkInput : public VideoInput {
 public:
-    RPInput(const std::string& rtspUrl) : rtspUrl(rtspUrl) {}
-    ~RPInput() { stopStream(); }
+    NetworkInput(const std::string& networkURL) : networkURL(networkURL) {}
+    ~NetworkInput() { stopStream(); }
 
     bool startStream() override {
-        if (!rtspStream.open(rtspUrl)) {
+        if (!networkStream.open(networkURL)) {
             return false;
         }
         isStreaming = true;
@@ -26,23 +26,23 @@ public:
 
     void stopStream() override {
         if (isStreaming) {
-            rtspStream.release();
+            networkStream.release();
             isStreaming = false;
         }
     }
 
 
     bool getFrame(cv::Mat &frame) override {
-        if (!isStreaming || !rtspStream.isOpened()) {
+        if (!isStreaming || !networkStream.isOpened()) {
             return false;
         }
-        rtspStream >> frame;
+        networkStream >> frame;
         return !frame.empty();
     }
 
 private:
-    std::string rtspUrl;
-    cv::VideoCapture rtspStream;
+    std::string networkURL;
+    cv::VideoCapture networkStream;
 };
 
-#endif //AR_SETTLERS_RPINPUT_H
+#endif //AR_SETTLERS_NETWORKINPUT_H

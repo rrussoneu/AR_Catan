@@ -57,13 +57,13 @@ void Controller::switchToCamera() {
     captureThread->start();
 }
 
-void Controller::switchToRTSP(const QString &rtspUrl) {
+void Controller::switchToURL(const QString &rtspUrl) {
     stopCurrentInput();
 
     if (rpInput) {
         delete rpInput;
     }
-    rpInput = new RPInput(rtspUrl.toStdString());
+    rpInput = new NetworkInput(rtspUrl.toStdString());
 
     if (!rpInput->startStream()) {
         qWarning("RTSP connection failed.");

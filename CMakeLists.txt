@@ -30,7 +30,7 @@ add_executable(AR_Settlers main.cpp
         Controller/Video/VideoCaptureThread.h
         View/GUIView.cpp
         View/GUIView.h
-        Controller/Video/RPInput.h
+        Controller/Video/NetworkInput.h
         AR_Objs/ARObject.h
         AR_Objs/Aruco/ArucoObject.h
         AR_Objs/Aruco/HomographyObj.h

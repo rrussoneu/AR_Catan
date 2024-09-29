@@ -195,6 +195,9 @@ public:
 
     )";
 
+
+
+
     void finalizeRendering(cv::Mat &frame) {
         fbo->release();
 
@@ -215,6 +218,11 @@ public:
         cv::Mat glFrameF, frameBGRAF;
         glFrame.convertTo(glFrameF, CV_32FC4, 1.0 / 255.0);
         frameBGRA.convertTo(frameBGRAF, CV_32FC4, 1.0 / 255.0);
+
+        // Adjust frames if needed
+        if (glFrameF.size() != frameBGRAF.size() || glFrameF.channels() != frameBGRAF.channels()) {
+            cv::resize(glFrameF, glFrameF, frameBGRAF.size());
+        }
 
         // Split glFrameF into individual channels
         std::vector<cv::Mat> glChannels(4);
