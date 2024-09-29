@@ -8,6 +8,8 @@
 #include "Commands/DecrementScoreCommand.h"
 #include <opencv2/aruco.hpp>
 #include <QMessageBox>
+#include <QInputDialog>
+#include <QLineEdit>
 
 Controller::Controller(GameModel *model, QObject *parent)
         : QObject(parent), model(model), currentInput(nullptr), captureThread(nullptr),
@@ -28,6 +30,12 @@ Controller::~Controller() {
     stopCurrentInput();
     delete cameraInput;
     if (rpInput) delete rpInput;
+    if (processingThread) {
+        processingThread->stop();
+        processingThread->wait();
+        delete processingThread;
+        processingThread = nullptr;
+    }
 }
 
 void Controller::stopCurrentInput() {
@@ -45,6 +53,7 @@ void Controller::stopCurrentInput() {
 
 void Controller::switchToCamera() {
     stopCurrentInput();
+    getParams();
 
     if (!cameraInput->startStream()) {
         qWarning("Failed to open default camera");
@@ -57,13 +66,17 @@ void Controller::switchToCamera() {
     captureThread->start();
 }
 
-void Controller::switchToRTSP(const QString &rtspUrl) {
+void Controller::switchToURL(const QString &rtspUrl) {
     stopCurrentInput();
+
+    getParams();
 
     if (rpInput) {
         delete rpInput;
+        rpInput = nullptr;
     }
-    rpInput = new RPInput(rtspUrl.toStdString());
+
+    rpInput = new NetworkInput(rtspUrl.toStdString());
 
     if (!rpInput->startStream()) {
         qWarning("RTSP connection failed.");
@@ -74,6 +87,20 @@ void Controller::switchToRTSP(const QString &rtspUrl) {
     captureThread = new VideoCaptureThread(currentInput);
     connect(captureThread, &VideoCaptureThread::frameCaptured, this, &Controller::processFrame);
     captureThread->start();
+}
+
+void Controller::getParams() {
+    // Prompt the user for a file path
+    QString camParamPath = QInputDialog::getText(nullptr, "Enter Camera Parameter File Path",
+                                                 "Camera Parameter File Path:",
+                                                 QLineEdit::Normal, "camera_calibration_setting.xml");
+    if (camParamPath.isEmpty()) {
+        // Default file if no input is provided
+        camParamPath = "camera_calibration_setting.xml";
+    }
+
+    // Pass the file path to the processing thread to init with the correct camera parameters
+    processingThread->setCalibrationFilePath(camParamPath);
 }
 
 void Controller::processFrame(const cv::Mat &frame) {

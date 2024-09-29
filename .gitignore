@@ -1,4 +1,5 @@
 dependencytest.cpp
+markers/
 
 # Ignore build directories
 cmake-build-debug/

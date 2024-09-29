@@ -12,7 +12,7 @@
 #include "Video/VideoInput.h"
 #include "Video/VideoCaptureThread.h"
 #include "../Model/GameModel.h"
-#include "Video/RPInput.h"
+#include "Video/NetworkInput.h"
 #include "Video/CameraInput.h"
 #include "Processing/ProcessingThread.h"
 #include "Commands/Command.h"
@@ -40,7 +40,7 @@ public:
 public slots:
     void processFrame(const cv::Mat &frame);
     void switchToCamera();
-    void switchToRTSP(const QString &rtspUrl);
+    void switchToURL(const QString &rtspUrl);
 
     // Slots for view interaction
     void rollDice();
@@ -72,9 +72,11 @@ private:
 
 
     CameraInput *cameraInput;  // Built in cam
-    RPInput *rpInput;      // RPi input --- COME BACK TO THIS LATER WHEN I HAVE THE RASPBERRY PI ON ME
+    NetworkInput *rpInput;
 
     void stopCurrentInput();
+
+    void getParams();
 
     void runCommand(std::unique_ptr<Command> command) {
         QMap<QString, QVariant> result = command->run();

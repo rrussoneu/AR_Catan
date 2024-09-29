@@ -19,17 +19,17 @@ GUIView::GUIView(Controller* controller, QWidget* parent)
     // Switch video source buttons and layout
     QHBoxLayout* videoButtonsLayout = new QHBoxLayout;
     QPushButton* cameraButton = new QPushButton("Switch to Camera", this);
-    QPushButton* rtspButton = new QPushButton("Switch to RTSP Stream", this);
+    QPushButton* networkButton = new QPushButton("Enter URL for Stream", this);
     videoButtonsLayout->addWidget(cameraButton);
-    videoButtonsLayout->addWidget(rtspButton);
+    videoButtonsLayout->addWidget(networkButton);
     mainLayout->addLayout(videoButtonsLayout);
 
     // Connect buttons to controller slots for video
     connect(cameraButton, &QPushButton::clicked, controller, &Controller::switchToCamera);
-    connect(rtspButton, &QPushButton::clicked, [this]() {
-        QString rtspUrl = QInputDialog::getText(this, "Enter RTSP URL", "RTSP URL:");
-        if (!rtspUrl.isEmpty()) {
-            this->controller->switchToRTSP(rtspUrl);
+    connect(networkButton, &QPushButton::clicked, [this]() {
+        QString netURL = QInputDialog::getText(this, "Enter URL", "URL:");
+        if (!netURL.isEmpty()) {
+            this->controller->switchToURL(netURL);
         }
     });
 
