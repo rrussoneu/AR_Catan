@@ -15,6 +15,8 @@ ProcessingThread::ProcessingThread(GameModel *model, QObject *parent) : QThread(
         dictionary(cv::aruco::getPredefinedDictionary(cv::aruco::DICT_4X4_1000)), detectorParams(cv::aruco::DetectorParameters()),
         detector(dictionary, detectorParams), glContext(nullptr), offScreenSurface(nullptr){
 
+
+        // Refactor this to its own function to call for camera switching and stuff
         try {
             cv::FileStorage fs("camera_calibration_setting.xml", cv::FileStorage::READ);
             if (fs.isOpened()) {
@@ -125,7 +127,7 @@ void ProcessingThread::run() {
     int frameHeight = firstFrame.rows;
 
     // Create and initialize OpenGLRenderStrategy with frame dimensions
-    renderStrategy = new OpenGLRenderStrategy(glContext);
+    renderStrategy = new OpenGLRenderStrategy();
     if (!renderStrategy->initialize(frameWidth, frameHeight)) {
         qWarning() << "Failed to initialize OpenGL render strategy";
         //return;
@@ -189,7 +191,7 @@ void ProcessingThread::processFrame(const cv::Mat &frame) {
                 continue;
             }
 
-            if (arObject->getRenderStrategy() == nullptr) {
+            if (arObject->getRenderStrategy() == nullptr) { // If it was null then it needs an OpenGL strategy, add an enum for this later
                 // Assign the OpenGLRenderStrategy
                 arObject->setRenderStrategy(renderStrategy);
             }
