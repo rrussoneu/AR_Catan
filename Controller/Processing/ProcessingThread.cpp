@@ -13,30 +13,11 @@
 ProcessingThread::ProcessingThread(GameModel *model, QObject *parent) : QThread(parent), model(model), stopThread(false),
         dictionary(cv::aruco::getPredefinedDictionary(cv::aruco::DICT_4X4_1000)), detectorParams(cv::aruco::DetectorParameters()),
         detector(dictionary, detectorParams), glContext(nullptr), offScreenSurface(nullptr){
-
-        /*
-        // Refactor this to its own function to call for camera switching and stuff
-        try {
-            cv::FileStorage fs("camera_calibration_setting.xml", cv::FileStorage::READ);
-            if (fs.isOpened()) {
-                fs["camera_matrix"] >> cameraMatrix;
-                fs["distortion_coefficients"] >> distCoeffs;
-                fs.release();
-            } else {
-                emit errorOccurred("Calibration file opening failed");
-                printf("Calibration file opening failed.");
-            }
-        } catch (int e) {
-            printf("Error with loading calibration");
-        }*/
-
-
 }
 
 ProcessingThread::~ProcessingThread() {
     // Stop thread and wait for thread to finish
     stop();
-    //mutex.unlock();
     wait(); // Wait for thread to finish executing
 
     // Clean up OpenGL resources

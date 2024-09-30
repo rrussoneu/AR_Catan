@@ -7,6 +7,9 @@
 #pragma once
 #include "RenderStrategy.h"
 
+/**
+ * Class for rendering objects using OpenCV's drawing capabilities
+ */
 class OpenCVRenderStrategy : public RenderStrategy {
 public:
 
@@ -19,6 +22,7 @@ public:
         return instance;
     }
 
+    // This render strategy is type 1
     int getType() override {return 1;}
 
     bool initialize(int frameWidth, int frameHeight) override {return true;}
@@ -28,8 +32,11 @@ public:
                 const cv::Vec3d &rvec, const cv::Vec3d &tvec,
                 const std::vector<double> &distCoeffs,
                 const cv::Mat &cameraMatrix) override {
+
         std::vector<cv::Point2f> imgPoints; // 2D calculated points to draw
         std::vector<std::vector<cv::Point3f>> polys = object->getPolygons();
+
+        // Draw the polygons by connecting the points with lines
         for (int i = 0; i < polys.size(); ++i) {
             cv::projectPoints(polys.at(i), rvec, tvec, cameraMatrix, distCoeffs, imgPoints); // Solve
             cv::Scalar color = object->getColors().at(i);

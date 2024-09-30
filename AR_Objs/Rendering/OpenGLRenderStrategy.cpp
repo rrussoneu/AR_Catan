@@ -26,8 +26,6 @@ OpenGLRenderStrategy::~OpenGLRenderStrategy() {
 }
 
 void OpenGLRenderStrategy::prepareForRendering(const cv::Mat &frame) {
-
-
     if (!fbo->bind()) {
         qWarning() << "Failed to bind FBO in prepareForRendering";
         return;
@@ -43,8 +41,11 @@ void OpenGLRenderStrategy::prepareForRendering(const cv::Mat &frame) {
 }
 
 QMatrix4x4 OpenGLRenderStrategy::createProjectionMatrix(const cv::Mat &cameraMatrix, int width, int height, double nearPlane, double farPlane) {
+    // Get intrinsic params
+    // Focal length
     double fx = cameraMatrix.at<double>(0, 0);
     double fy = cameraMatrix.at<double>(1, 1);
+    // Optical centers
     double cx = cameraMatrix.at<double>(0, 2);
     double cy = cameraMatrix.at<double>(1, 2);
 
@@ -65,9 +66,13 @@ QMatrix4x4 OpenGLRenderStrategy::createProjectionMatrix(const cv::Mat &cameraMat
 }
 
 QMatrix4x4 OpenGLRenderStrategy::createModelViewMatrix(const cv::Vec3d &rvec, const cv::Vec3d &tvec) {
+    // Note again: Qt (like OpenGL) uses column major matrices
+
+    // Rotation vector -> matrix
     cv::Mat rotMat;
     cv::Rodrigues(rvec, rotMat);
 
+    // Start with identity matrix
     QMatrix4x4 modelView;
     modelView.setToIdentity();
 

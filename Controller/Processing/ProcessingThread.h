@@ -42,7 +42,7 @@ public:
 
     /**
      * Set path for camera calibration/ parameters file
-     * @param filePath
+     * @param filePath The path
      */
     void setCalibrationFilePath(const QString &filePath);
 
@@ -86,8 +86,8 @@ private:
     void processFrame(const cv::Mat &frame);
 
     // Camera calibration data
-    cv::Mat cameraMatrix;
-    std::vector<double> distCoeffs;
+    cv::Mat cameraMatrix; // Intrinsics
+    std::vector<double> distCoeffs; // Distortion coefficients
 
     // OpenGL context and surface for offscreen rendering
     QOpenGLContext *glContext;

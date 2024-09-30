@@ -19,11 +19,15 @@ public:
     // Stops video capture
     virtual void stopStream() = 0;
 
-    // Gets frame
+    /**
+     * Gets data from video source and stores in frame
+     * @param frame CV mat for frame data
+     * @return True on success
+     */
     virtual bool getFrame(cv::Mat &frame) = 0;
 
 protected:
-    // Is currently capturing video stream
+    // Is currently capturing video stream flag
     bool isStreaming = false;
 };
 

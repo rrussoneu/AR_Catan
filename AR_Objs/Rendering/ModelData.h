@@ -13,6 +13,9 @@
 #include <QOpenGLBuffer>
 #include <QOpenGLVertexArrayObject>
 
+/**
+ * Struct for a 3D model's data
+ */
 struct ModelData {
     int vertexCount;
 
