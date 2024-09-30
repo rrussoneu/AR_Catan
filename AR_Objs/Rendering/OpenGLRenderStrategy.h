@@ -31,7 +31,7 @@ public:
 
     QMatrix4x4 createModelViewMatrix(const cv::Vec3d &rvec, const cv::Vec3d &tvec);
 
-    bool initialize(int frameWidth, int frameHeight);
+    bool initialize(int frameWidth, int frameHeight) override;
 
     void finalizeRendering(cv::Mat &frame);
 

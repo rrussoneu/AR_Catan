@@ -32,6 +32,8 @@ public slots:
     //void updatePlayerInfo(const QString& color, const Player& player);
     void updatePlayerInfo(const QMap<QString, QVariant>& playerInfo);
 
+    void displayError(const QString &message);
+
 private:
     QLabel* videoLabel;   // Video display
     Controller* controller;

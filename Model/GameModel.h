@@ -10,9 +10,12 @@
 #include "../AR_Objs/ARObject.h"
 #include "Player.h"
 #include <QMap>
+#include <QObject>
 
-class GameModel {
+class GameModel: public QObject {
+    Q_OBJECT
 public:
+    explicit GameModel(QObject *parent = nullptr);
     void addObject(int markerID, ARObject* obj) {
         objectMap[markerID] = obj;
     }
@@ -37,6 +40,9 @@ signals:
 
     // Signal for errors
     void errorOccurred(const QString &message);
+
+    // Signal for generic message
+    void sendMessage(const QString &message);
 
 private:
     std::unordered_map<int, ARObject*> objectMap;

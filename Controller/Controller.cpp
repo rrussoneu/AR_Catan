@@ -7,7 +7,6 @@
 #include "Commands/IncrementScoreCommand.h"
 #include "Commands/DecrementScoreCommand.h"
 #include <opencv2/aruco.hpp>
-#include <QMessageBox>
 #include <QInputDialog>
 #include <QLineEdit>
 
@@ -135,6 +134,11 @@ void Controller::incrementPlayerScore(const QString &color) {
 
 void Controller::decrementPlayerScore(const QString &color) {
     runCommand(std::make_unique<DecrementScoreCommand>(model, color));
+}
+
+void Controller::handleError(const QString &message) {
+    // Emit the error to the view
+    emit displayError(message);
 }
 
 
