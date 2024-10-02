@@ -17,8 +17,9 @@
 #include <QtCore/qdir.h>
 
 class OpenGLRenderStrategy : public RenderStrategy, protected QOpenGLFunctions {
+    Q_OBJECT
 public:
-    OpenGLRenderStrategy();
+    OpenGLRenderStrategy(QObject *parent = nullptr);
     ~OpenGLRenderStrategy();
 
     // Type 2 for OpenGL strategy

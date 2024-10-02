@@ -34,8 +34,8 @@ public slots:
     void displayError(const QString &message);
 
 private:
-    QLabel* videoLabel;   // Video display
-    Controller* controller;
+    QLabel *videoLabel;   // Video display
+    Controller *controller;
 
     // Roll dice
     QPushButton *rollDiceButton;

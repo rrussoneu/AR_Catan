@@ -9,7 +9,7 @@
 #include <QOpenGLFunctions>
 #include <QDebug>
 
-ModelLoader::ModelLoader() {
+ModelLoader::ModelLoader(QObject *parent) {
 }
 
 ModelLoader::~ModelLoader() {

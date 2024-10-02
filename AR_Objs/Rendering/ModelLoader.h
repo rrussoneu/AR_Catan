@@ -13,13 +13,14 @@
 #include <QVector2D>
 #include <QOpenGLBuffer>
 #include "ModelData.h"
+#include "../../Model/MessageEmitter.h"
 
 /**
  * Class for loading model data from .obj files
  */
-class ModelLoader {
+class ModelLoader: public MessageEmitter {
 public:
-    ModelLoader();
+    explicit ModelLoader(QObject *parent = nullptr);
     ~ModelLoader();
 
     /**

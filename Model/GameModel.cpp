@@ -7,7 +7,7 @@
 #include "Database/DatabaseManager.h"
 
 
-GameModel::GameModel(QObject *parent) : QObject(parent) {}
+GameModel::GameModel(QObject *parent) : MessageEmitter(parent) {}
 
 void GameModel::addPlayer(const QString &color, const Player &player) {
     players.insert(color, player);
@@ -44,7 +44,7 @@ void GameModel::finishGame() {
     QList<Player*> allPlayers = getAllPlayers();
 
     if (allPlayers.isEmpty()) {
-        emit errorOccurred("There are no players to process.");
+        emit sendError("There are no players to process.");
         return;
     }
 
@@ -67,7 +67,7 @@ void GameModel::finishGame() {
 
 
         if (player->getUsername() == "guest") {
-            emit errorOccurred("Guest skipped in stat updates");
+            emit sendError("Guest skipped in stat updates");
             continue;
         }
 
@@ -84,7 +84,7 @@ void GameModel::finishGame() {
 
         // Save updated stats to the database
         if (!DatabaseManager::getInstance().updatePlayerStats(*player)) {
-            emit errorOccurred("Database error - failed to update player stats for: " + player->getUsername());
+            emit sendError("Database error - failed to update player stats for: " + player->getUsername());
         }
     }
 

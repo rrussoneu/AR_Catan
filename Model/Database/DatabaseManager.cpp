@@ -8,7 +8,7 @@
 QMutex DatabaseManager::mutex;
 
 // Singleton - private constructor
-DatabaseManager::DatabaseManager(QObject *parent) : QObject(parent){}
+DatabaseManager::DatabaseManager(QObject *parent) : MessageEmitter(parent){}
 
 
 
@@ -35,7 +35,7 @@ bool DatabaseManager::openDatabase(const QString &path) {
 
     // Return false if issue
     if (!db.open()) {
-        qWarning("Failed to open db");
+        emit sendError("Failed to open db");
         return false;
     }
 
@@ -50,7 +50,7 @@ bool DatabaseManager::openDatabase(const QString &path) {
     )";
 
     if (!query.exec(createTable)) {
-        qWarning("Failed to create table");
+        emit sendError("Failed to create table");
         return false;
     }
 
@@ -81,7 +81,7 @@ bool DatabaseManager::getPlayerStats(Player &player) {
         player.setTotalScore(query.value("totalScore").toInt());
         return true; // Player exists
     } else {
-        qWarning("Player not found / query failed in getting stats");
+        emit sendError("Player not found / query failed in getting stats");
         return false; // Player does not exist
     }
 
@@ -99,7 +99,7 @@ bool DatabaseManager::addNewPlayer(const Player &player) {
     query.bindValue(":totalScore", player.getTotalScore());
 
     if (!query.exec()) {
-        qWarning("Failed to add new player");
+        emit sendError("Failed to add new player");
         return false;
     }
 
@@ -116,7 +116,7 @@ bool DatabaseManager::updatePlayerStats(const Player &player) {
     query.bindValue(":gamesPlayed", player.getGamesPlayed());
     query.bindValue(":totalScore", player.getTotalScore());
     if (!query.exec()) {
-        qWarning("Failed to update player stats");
+        emit sendError("Failed to update player stats");
         return false;
     }
 

@@ -49,9 +49,12 @@ public slots:
     void incrementPlayerScore(const QString &color);
     void decrementPlayerScore(const QString &color);
     void onFrameProcessed(const cv::Mat &frame);
+    //void onPromptEntered(const QString &input);
 
     // Slot for receiving error messages
     void handleError(const QString &message);
+
+
 
 signals:
     // Signal to send processed frame to View
@@ -69,16 +72,22 @@ signals:
     // Signal to errors to the view
     void displayError(const QString &message);
 
+    // Signal to display normal messages to View
+    void displayMessage(const QString &message);
+
+    // Signal to send a prompt
+    void displayPrompt(const QString &message);
+
 
 private:
     GameModel *model;
-    VideoInput *currentInput;  // Ptr for curr source
+    VideoInput *currentInput;  // Pointer for curr source
     VideoCaptureThread *captureThread;
     ProcessingThread *processingThread;
 
 
     CameraInput *cameraInput;  // Built in cam
-    NetworkInput *rpInput;
+    NetworkInput *rpInput; // Network input (Raspberry Pi)
 
     void stopCurrentInput();
 

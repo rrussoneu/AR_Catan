@@ -46,6 +46,8 @@ public:
      */
     void setCalibrationFilePath(const QString &filePath);
 
+public slots:
+    void handleError(const QString &message);
 
 signals:
     /**

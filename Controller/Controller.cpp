@@ -6,6 +6,7 @@
 #include "Commands/UpdateUsernameCommand.h"
 #include "Commands/IncrementScoreCommand.h"
 #include "Commands/DecrementScoreCommand.h"
+#include "../Model/Database/DatabaseManager.h"
 #include <opencv2/aruco.hpp>
 #include <QInputDialog>
 #include <QLineEdit>
@@ -20,8 +21,9 @@ Controller::Controller(GameModel *model, QObject *parent)
     }
 
     connect(processingThread, &ProcessingThread::frameProcessed, this, &Controller::onFrameProcessed);
-    connect(model, &GameModel::errorOccurred, this, &Controller::handleError);
+    connect(model, &MessageEmitter::sendError, this, &Controller::handleError);
     connect(processingThread, &ProcessingThread::errorOccurred, this, &Controller::handleError);
+    connect(&DatabaseManager::getInstance(), &MessageEmitter::sendError, this, &Controller::handleError);
 
     processingThread->start();
 
@@ -58,7 +60,7 @@ void Controller::switchToCamera() {
     getParams();
 
     if (!cameraInput->startStream()) {
-        qWarning("Failed to open default camera");
+        emit handleError("Failed to open default camera");
         return;
     }
 
@@ -81,7 +83,7 @@ void Controller::switchToURL(const QString &rtspUrl) {
     rpInput = new NetworkInput(rtspUrl.toStdString());
 
     if (!rpInput->startStream()) {
-        qWarning("RTSP connection failed.");
+        emit handleError("RTSP connection failed.");
         return;
     }
 
@@ -93,6 +95,8 @@ void Controller::switchToURL(const QString &rtspUrl) {
 
 void Controller::getParams() {
     // Prompt the user for a file path
+
+    // Move this to View logic later
     QString camParamPath = QInputDialog::getText(nullptr, "Enter Camera Parameter File Path",
                                                  "Camera Parameter File Path:",
                                                  QLineEdit::Normal, "camera_calibration_setting.xml");
@@ -125,7 +129,12 @@ void Controller::finishGame() {
 }
 
 void Controller::updatePlayerUsername(const QString &color, const QString &username) {
-    runCommand(std::make_unique<UpdateUsernameCommand>(model, color, username));
+    auto updateCommand = std::make_unique<UpdateUsernameCommand>(model, color, username);
+    // Store a raw pointer to the command object
+    Command* rawCommandPtr = updateCommand.get();
+    // Connect using the raw pointer to pass along a potential error
+    connect(rawCommandPtr, &MessageEmitter::sendError, this, &Controller::handleError);
+    runCommand(std::move(updateCommand));
 }
 
 void Controller::incrementPlayerScore(const QString &color) {

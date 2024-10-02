@@ -22,8 +22,10 @@ ProcessingThread::~ProcessingThread() {
 
     // Clean up OpenGL resources
     if (glContext) {
-        glContext->makeCurrent(offScreenSurface);
-        glContext->doneCurrent();
+        if (offScreenSurface && glContext->isValid()) {
+            glContext->makeCurrent(offScreenSurface);
+            glContext->doneCurrent();
+        }
         delete glContext;
     }
     if (offScreenSurface) {
@@ -120,6 +122,7 @@ void ProcessingThread::run() {
     if (!renderStrategy->initialize(frameWidth, frameHeight)) {
         emit errorOccurred("Failed to initialize OpenGL render strategy");
     }
+    connect(renderStrategy, &RenderStrategy::sendError, this, &ProcessingThread::handleError);
 
     // Process the first frame
     processFrame(firstFrame);
@@ -242,4 +245,8 @@ void ProcessingThread::setCalibrationFilePath(const QString &filePath) {
     } catch (int e) {
         emit errorOccurred("Calibration info error - using default");
     }
+}
+
+void ProcessingThread::handleError(const QString &message) {
+    emit errorOccurred(message);
 }
