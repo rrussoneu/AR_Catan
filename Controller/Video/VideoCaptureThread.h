@@ -35,7 +35,7 @@ signals:
     void frameCaptured(const cv::Mat &frame);
 
 private:
-    VideoInput *videoInput; // Both camera and rtsp inputs depending on computer vs rpi camera
+    VideoInput *videoInput; // Both camera and network inputs depending on computer vs other camera
     bool stopThread;
 };
 

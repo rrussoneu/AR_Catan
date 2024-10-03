@@ -13,35 +13,19 @@
 ProcessingThread::ProcessingThread(GameModel *model, QObject *parent) : QThread(parent), model(model), stopThread(false),
         dictionary(cv::aruco::getPredefinedDictionary(cv::aruco::DICT_4X4_1000)), detectorParams(cv::aruco::DetectorParameters()),
         detector(dictionary, detectorParams), glContext(nullptr), offScreenSurface(nullptr){
-
-
-        // Refactor this to its own function to call for camera switching and stuff
-        try {
-            cv::FileStorage fs("camera_calibration_setting.xml", cv::FileStorage::READ);
-            if (fs.isOpened()) {
-                fs["camera_matrix"] >> cameraMatrix;
-                fs["distortion_coefficients"] >> distCoeffs;
-                fs.release();
-            } else {
-                printf("Calibration file opening failed.");
-            }
-        } catch (int e) {
-            printf("Error with loading calibration");
-        }
-
-
 }
 
 ProcessingThread::~ProcessingThread() {
     // Stop thread and wait for thread to finish
     stop();
-    //mutex.unlock();
     wait(); // Wait for thread to finish executing
 
     // Clean up OpenGL resources
     if (glContext) {
-        glContext->makeCurrent(offScreenSurface);
-        glContext->doneCurrent();
+        if (offScreenSurface && glContext->isValid()) {
+            glContext->makeCurrent(offScreenSurface);
+            glContext->doneCurrent();
+        }
         delete glContext;
     }
     if (offScreenSurface) {
@@ -89,7 +73,7 @@ void ProcessingThread::run() {
     glContext->setFormat(format);
 
     if (!glContext->create()) {
-        qWarning() << "Failed to create OpenGL context";
+        emit errorOccurred("Failed to create OpenGL context");
         return;
     }
 
@@ -99,12 +83,12 @@ void ProcessingThread::run() {
     offScreenSurface->create();
 
     if (!offScreenSurface->isValid()) {
-        qWarning() << "Offscreen surface is not valid";
+        emit errorOccurred("Offscreen surface not valid");
         return;
     }
 
     if (!glContext->makeCurrent(offScreenSurface)) {
-        qWarning() << "Failed to make OpenGL context current";
+        emit errorOccurred("Failed to make OpenGL context current");
         return;
     }
 
@@ -126,7 +110,7 @@ void ProcessingThread::run() {
     }
 
     if (firstFrame.empty()) {
-        qWarning() << "Failed to retrieve the first frame";
+        emit errorOccurred("Failed to get first frame");
         return;
     }
 
@@ -136,9 +120,9 @@ void ProcessingThread::run() {
     // Create and initialize OpenGLRenderStrategy with frame dimensions
     renderStrategy = new OpenGLRenderStrategy();
     if (!renderStrategy->initialize(frameWidth, frameHeight)) {
-        qWarning() << "Failed to initialize OpenGL render strategy";
-        //return;
+        emit errorOccurred("Failed to initialize OpenGL render strategy");
     }
+    connect(renderStrategy, &RenderStrategy::sendError, this, &ProcessingThread::handleError);
 
     // Process the first frame
     processFrame(firstFrame);
@@ -248,7 +232,8 @@ void ProcessingThread::setCalibrationFilePath(const QString &filePath) {
             fs["distortion_coefficients"] >> distCoeffs;
             fs.release();
         } else {
-            printf("Calibration file opening failed, falling back to default calibration.");
+            emit errorOccurred("Calibration file opening failed - using default");
+
             // Default file
             cv::FileStorage fallbackFs("camera_calibration_setting.xml", cv::FileStorage::READ);
             if (fallbackFs.isOpened()) {
@@ -258,6 +243,10 @@ void ProcessingThread::setCalibrationFilePath(const QString &filePath) {
             }
         }
     } catch (int e) {
-        printf("Error with loading calibration, using default settings.");
+        emit errorOccurred("Calibration info error - using default");
     }
+}
+
+void ProcessingThread::handleError(const QString &message) {
+    emit errorOccurred(message);
 }

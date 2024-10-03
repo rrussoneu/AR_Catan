@@ -50,7 +50,6 @@ void Player::decrementScore() {
 }
 
 float Player::getAverageScore() const {
-    // Once database added this can be implemented
     return gamesPlayed == 0 ? 0.0 : (float) totalScore / gamesPlayed;
 }
 

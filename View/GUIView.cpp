@@ -5,6 +5,7 @@
 
 #include "GUIView.h"
 #include <QInputDialog>
+#include <QMessageBox>
 
 
 GUIView::GUIView(Controller* controller, QWidget* parent)
@@ -65,6 +66,7 @@ GUIView::GUIView(Controller* controller, QWidget* parent)
     connect(controller, &Controller::frameReady, this, &GUIView::updateVideoFeed);
     connect(controller, &Controller::diceRolled, this, &GUIView::updateDiceRoll);
     connect(controller, &Controller::playerUpdated, this, &GUIView::updatePlayerInfo);
+    connect(controller, &Controller::displayError, this, &GUIView::displayError);
 
     setLayout(mainLayout);
 }
@@ -217,4 +219,8 @@ QGroupBox* GUIView::createPlayerPanel(const QString& color) {
 
     groupBox->setLayout(vbox);
     return groupBox;
+}
+
+void GUIView::displayError(const QString &message) {
+    QMessageBox::warning(this, "Error", message);
 }

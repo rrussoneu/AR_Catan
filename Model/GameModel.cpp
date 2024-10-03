@@ -7,6 +7,8 @@
 #include "Database/DatabaseManager.h"
 
 
+GameModel::GameModel(QObject *parent) : MessageEmitter(parent) {}
+
 void GameModel::addPlayer(const QString &color, const Player &player) {
     players.insert(color, player);
 }
@@ -42,7 +44,7 @@ void GameModel::finishGame() {
     QList<Player*> allPlayers = getAllPlayers();
 
     if (allPlayers.isEmpty()) {
-        QMessageBox::warning(nullptr, "No Players", "There are no players to process.");
+        emit sendError("There are no players to process.");
         return;
     }
 
@@ -63,9 +65,9 @@ void GameModel::finishGame() {
     // Update stats for all players
     for (Player* player : allPlayers) {
 
-        //DatabaseManager::getInstance().getPlayerStats(*player);
+
         if (player->getUsername() == "guest") {
-            qWarning("Guest player being skipped.");
+            emit sendError("Guest skipped in stat updates");
             continue;
         }
 
@@ -82,7 +84,7 @@ void GameModel::finishGame() {
 
         // Save updated stats to the database
         if (!DatabaseManager::getInstance().updatePlayerStats(*player)) {
-            QMessageBox::warning(nullptr, "Database Error", "Failed to update stats for player: " + player->getUsername());
+            emit sendError("Database error - failed to update player stats for: " + player->getUsername());
         }
     }
 
@@ -91,6 +93,5 @@ void GameModel::finishGame() {
     for (Player* winner : winners) {
         winnerNames += winner->getUsername() + " ";
     }
-
-    QMessageBox::information(nullptr, "Game Finished", "The game has ended.\nWinner(s): " + winnerNames);
+    emit sendMessage("Game finished. Winner(s): " + winnerNames);
 }

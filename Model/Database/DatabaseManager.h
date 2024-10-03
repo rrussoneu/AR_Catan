@@ -11,9 +11,10 @@
 #include <QSqlDatabase>
 #include <QMutex>
 #include "../Player.h"
+#include "../MessageEmitter.h"
 
-class DatabaseManager : public QObject{
-Q_OBJECT
+class DatabaseManager : public MessageEmitter{
+
 public:
     static DatabaseManager& getInstance();
     ~DatabaseManager();

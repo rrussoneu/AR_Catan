@@ -17,8 +17,8 @@ private:
     QString username;
 
 public:
-    UpdateUsernameCommand(GameModel *model, const QString &color, const QString &username)
-            : model(model), color(color), username(username) {}
+    UpdateUsernameCommand(GameModel *model, const QString &color, const QString &username, QObject *parent = nullptr)
+            : model(model), color(color), username(username), Command(parent) {}
 
     QMap<QString, QVariant> run() override {
         Player *player = model->getPlayer(color);
@@ -26,7 +26,7 @@ public:
             player->setUsername(username);
             PlayerService playerService;
             if (!playerService.fetchOrCreatePlayer(*player)) {
-                qWarning("Failed to fetch or create player!!!");
+                emit sendError("Failed to fetch or create player!!!");
 
             }
 
@@ -41,6 +41,8 @@ public:
         }
         return {};
     }
+
+
 };
 
 #endif //AR_SETTLERS_UPDATEUSERNAMECOMMAND_H

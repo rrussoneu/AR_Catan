@@ -9,7 +9,7 @@ bool PlayerService::fetchOrCreatePlayer(Player& player) {
     bool exists = DatabaseManager::getInstance().getPlayerStats(player);
     if (!exists) {
         if (!DatabaseManager::getInstance().addNewPlayer(player)) {
-            qWarning("Failed to add new player to the database");
+            //qWarning("Failed to add new player to the database"); -- now in the update username command
             return false;
         }
     }

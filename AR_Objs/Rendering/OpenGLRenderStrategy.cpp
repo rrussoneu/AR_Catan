@@ -8,8 +8,7 @@
 #include <QDebug>
 
 
-OpenGLRenderStrategy::OpenGLRenderStrategy()
-        : fbo(nullptr) {
+OpenGLRenderStrategy::OpenGLRenderStrategy(QObject *parent) : RenderStrategy(parent), fbo(nullptr) {
     /* Init called in process thread when OpenGLRenderStrategy is first needed.
      * Only one instance should exist to handle threading/ context.
      * All objects needing this strat get the pointer for it
@@ -26,10 +25,9 @@ OpenGLRenderStrategy::~OpenGLRenderStrategy() {
 }
 
 void OpenGLRenderStrategy::prepareForRendering(const cv::Mat &frame) {
-
-
     if (!fbo->bind()) {
-        qWarning() << "Failed to bind FBO in prepareForRendering";
+        emit sendError("Failed to bind FBO in prepareForRendering");
+        //qWarning() << "Failed to bind FBO in prepareForRendering";
         return;
     }
 
@@ -43,8 +41,11 @@ void OpenGLRenderStrategy::prepareForRendering(const cv::Mat &frame) {
 }
 
 QMatrix4x4 OpenGLRenderStrategy::createProjectionMatrix(const cv::Mat &cameraMatrix, int width, int height, double nearPlane, double farPlane) {
+    // Get intrinsic params
+    // Focal length
     double fx = cameraMatrix.at<double>(0, 0);
     double fy = cameraMatrix.at<double>(1, 1);
+    // Optical centers
     double cx = cameraMatrix.at<double>(0, 2);
     double cy = cameraMatrix.at<double>(1, 2);
 
@@ -65,9 +66,13 @@ QMatrix4x4 OpenGLRenderStrategy::createProjectionMatrix(const cv::Mat &cameraMat
 }
 
 QMatrix4x4 OpenGLRenderStrategy::createModelViewMatrix(const cv::Vec3d &rvec, const cv::Vec3d &tvec) {
+    // Note again: Qt (like OpenGL) uses column major matrices
+
+    // Rotation vector -> matrix
     cv::Mat rotMat;
     cv::Rodrigues(rvec, rotMat);
 
+    // Start with identity matrix
     QMatrix4x4 modelView;
     modelView.setToIdentity();
 
@@ -153,7 +158,8 @@ bool OpenGLRenderStrategy::initialize(int frameWidth, int frameHeight) {
     if (!shaderProgram.addShaderFromSourceCode(QOpenGLShader::Vertex, vertexShaderSource) ||
         !shaderProgram.addShaderFromSourceCode(QOpenGLShader::Fragment, fragmentShaderSource) ||
         !shaderProgram.link()) {
-        qWarning() << "Shader program failed to compile or link:" << shaderProgram.log();
+        //qWarning() << "Shader program failed to compile or link:" << shaderProgram.log();
+        emit sendMessage("Shader program failed to compile or link: " + shaderProgram.log());
         return false;
     }
 
@@ -167,7 +173,7 @@ bool OpenGLRenderStrategy::initialize(int frameWidth, int frameHeight) {
             "brick"
     };
     if (!loadModels(modelNames)) {
-        qWarning() << "Failed to load models.";
+        emit sendError("Failed to load models");
     }
 
     // Init fbo
@@ -198,7 +204,7 @@ void OpenGLRenderStrategy::render(ARObject *object, cv::Mat &frame,
     // Get data for object model
     ModelData *modelData = models.at(modelName);
     if (!modelData) {
-        qWarning() << "Model not found:" << QString::fromStdString(modelName);
+        emit sendError("Model not found: " + QString::fromStdString(modelName));
         return;
     }
 
@@ -280,8 +286,7 @@ bool OpenGLRenderStrategy::loadModels(const std::vector<std::string>& modelNames
         // Might refactor the directory - maybe come back to this
         std::string filePath = "AR_Objs/Rendering/Models/" + name + ".obj";
         if (!modelLoader.loadModel(name, filePath)) {
-            qWarning() << "Failed to load model:" << QString::fromStdString(name);
-
+            sendError("Failed to load model: "+ QString::fromStdString(name));
         } else {
             models[name] = modelLoader.getModel(name);
         }

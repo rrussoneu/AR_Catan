@@ -9,10 +9,19 @@
 #include <QString>
 #include "../AR_Objs/ARObject.h"
 #include "Player.h"
+#include "MessageEmitter.h"
 #include <QMap>
+#include <QObject>
 
-class GameModel {
+class GameModel: public MessageEmitter {
 public:
+    explicit GameModel(QObject *parent = nullptr);
+    ~GameModel() {
+        // Delete all ARObjects
+        for (const auto& pair : objectMap) {
+            delete pair.second;
+        }
+    }
     void addObject(int markerID, ARObject* obj) {
         objectMap[markerID] = obj;
     }
@@ -33,6 +42,7 @@ public:
     int rollDice();
 
     void finishGame();
+
 
 private:
     std::unordered_map<int, ARObject*> objectMap;

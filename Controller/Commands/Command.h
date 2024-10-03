@@ -8,8 +8,9 @@
 #pragma once
 #include <QString>
 
-class Command {
+class Command: public MessageEmitter{
 public:
+    explicit Command(QObject *parent = nullptr) : MessageEmitter(parent) {}
     virtual ~Command() = default;
     virtual QMap<QString, QVariant> run() = 0;
 };

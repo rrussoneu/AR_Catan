@@ -9,7 +9,7 @@
 #include <QOpenGLFunctions>
 #include <QDebug>
 
-ModelLoader::ModelLoader() {
+ModelLoader::ModelLoader(QObject *parent) {
 }
 
 ModelLoader::~ModelLoader() {
@@ -38,7 +38,7 @@ bool ModelLoader::loadModel(const std::string &name, const std::string &filePath
         return false;
     }
 
-    // Load first mesh - models are simple
+    // Load first mesh - models are simple and should in theory only have one
     aiMesh *mesh = scene->mMeshes[0];
 
     ModelData *modelData = new ModelData();

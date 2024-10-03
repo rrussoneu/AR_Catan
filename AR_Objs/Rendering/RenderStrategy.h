@@ -9,11 +9,14 @@
 
 #include <opencv2/opencv.hpp>
 #include "../ARObject.h"
+#include "../../Model/MessageEmitter.h"
+#include <QObject>
 
 class ARObject;
 
-class RenderStrategy {
+class RenderStrategy : public MessageEmitter {
 public:
+    explicit RenderStrategy(QObject *parent = nullptr);
     virtual ~RenderStrategy() = default;
     virtual void render(ARObject *object, cv::Mat &frame,
                         const std::vector<cv::Point2f> &markerCorners,
@@ -23,5 +26,6 @@ public:
     virtual bool initialize(int frameWidth, int frameHeight) = 0;
 
     virtual int getType() = 0;
+
 };
 #endif //AR_SETTLERS_RENDERSTRATEGY_H

@@ -29,12 +29,13 @@ public:
 public slots:
     void updateVideoFeed(const cv::Mat& frame); // Slot to update  video feed
     void updateDiceRoll(int roll);
-    //void updatePlayerInfo(const QString& color, const Player& player);
     void updatePlayerInfo(const QMap<QString, QVariant>& playerInfo);
 
+    void displayError(const QString &message);
+
 private:
-    QLabel* videoLabel;   // Video display
-    Controller* controller;
+    QLabel *videoLabel;   // Video display
+    Controller *controller;
 
     // Roll dice
     QPushButton *rollDiceButton;
