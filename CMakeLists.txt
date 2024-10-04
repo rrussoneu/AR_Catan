@@ -88,6 +88,8 @@ add_executable(AR_Settlers main.cpp
         Model/Database/DatabaseManager.h
         Model/Database/PlayerService.cpp
         Model/Database/PlayerService.h
+        AR_Objs/Rendering/RenderStrategy.cpp
+        Model/MessageEmitter.h
 
 )
 
