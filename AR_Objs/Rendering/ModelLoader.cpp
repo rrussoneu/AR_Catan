@@ -13,10 +13,6 @@ ModelLoader::ModelLoader(QObject *parent) {
 }
 
 ModelLoader::~ModelLoader() {
-    // Clean up loaded models
-    for (auto& pair : models) {
-        delete pair.second;
-    }
 }
 
 bool ModelLoader::loadModel(const std::string &name, const std::string &filePath) {
@@ -41,7 +37,7 @@ bool ModelLoader::loadModel(const std::string &name, const std::string &filePath
     // Load first mesh - models are simple and should in theory only have one
     aiMesh *mesh = scene->mMeshes[0];
 
-    ModelData *modelData = new ModelData();
+    std::shared_ptr<ModelData> modelData =std::make_shared<ModelData>();
     modelData->vertexCount = mesh->mNumFaces * 3; // Triangulated
 
     // Extract vertex data
@@ -141,7 +137,7 @@ bool ModelLoader::loadModel(const std::string &name, const std::string &filePath
     return true;
 }
 
-ModelData* ModelLoader::getModel(const std::string &name) {
+std::shared_ptr<ModelData> ModelLoader::getModel(const std::string &name) {
     auto it = models.find(name);
     if (it != models.end()) {
         return it->second;

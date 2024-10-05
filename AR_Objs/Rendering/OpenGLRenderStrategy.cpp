@@ -19,9 +19,6 @@ OpenGLRenderStrategy::~OpenGLRenderStrategy() {
     if (fbo) {
         delete fbo;
     }
-    for (auto& pair : models) {
-        delete pair.second;
-    }
 }
 
 void OpenGLRenderStrategy::prepareForRendering(const cv::Mat &frame) {
@@ -202,7 +199,7 @@ void OpenGLRenderStrategy::render(ARObject *object, cv::Mat &frame,
     std::string modelName = object->getName();
 
     // Get data for object model
-    ModelData *modelData = models.at(modelName);
+    std::shared_ptr<ModelData> modelData = models.at(modelName);
     if (!modelData) {
         emit sendError("Model not found: " + QString::fromStdString(modelName));
         return;

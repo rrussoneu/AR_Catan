@@ -79,7 +79,7 @@ private:
 
     // Model loading
     ModelLoader modelLoader;
-    std::unordered_map<std::string, ModelData*> models;
+    std::unordered_map<std::string, std::shared_ptr<ModelData>> models;
 
 };
 
