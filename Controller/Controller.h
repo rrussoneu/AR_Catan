@@ -54,6 +54,8 @@ public slots:
     // Slot for receiving error messages
     void handleError(const QString &message);
 
+    void endProcessing();
+
 
 
 signals:

@@ -13,7 +13,7 @@
 
 Controller::Controller(GameModel *model, QObject *parent)
         : QObject(parent), model(model), currentInput(nullptr), captureThread(nullptr),
-          cameraInput(new CameraInput()), rpInput(nullptr), processingThread(new ProcessingThread(model)) {
+          cameraInput(new CameraInput()), rpInput(nullptr), processingThread(new ProcessingThread(model, this)) {
     // Initialize players
     QStringList colors = {"blue", "red", "orange", "white"};
     for (const QString& color : colors) {
@@ -150,5 +150,12 @@ void Controller::handleError(const QString &message) {
     emit displayError(message);
 }
 
+void Controller::endProcessing() {
+    if (processingThread) {
+        processingThread->stop();  // Stop the processing thread
+        processingThread->wait();  // Wait for the thread to finish
 
-
+        delete processingThread;   // Clean up the thread
+        processingThread = nullptr;
+    }
+}

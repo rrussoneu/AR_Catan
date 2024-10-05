@@ -224,3 +224,9 @@ QGroupBox* GUIView::createPlayerPanel(const QString& color) {
 void GUIView::displayError(const QString &message) {
     QMessageBox::warning(this, "Error", message);
 }
+
+void GUIView::closeEvent(QCloseEvent* event) {
+
+    controller->endProcessing();
+    QWidget::closeEvent(event);  // Proceed with the normal close event
+}
