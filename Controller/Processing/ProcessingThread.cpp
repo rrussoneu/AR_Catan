@@ -20,28 +20,17 @@ ProcessingThread::~ProcessingThread() {
     stop();
     wait(); // Wait for thread to finish executing
 
-    // Clean up OpenGL resources
-    if (glContext) {
-        if (offScreenSurface && glContext->isValid()) {
-            glContext->makeCurrent(offScreenSurface);
-            glContext->doneCurrent();
-        }
-        delete glContext;
-    }
-    if (offScreenSurface) {
-        delete offScreenSurface;
-    }
+    glContext = nullptr;
+    offScreenSurface = nullptr;
+    renderStrategy = nullptr;
+    model = nullptr;
 
-    if (renderStrategy) {
-        delete renderStrategy;
-        renderStrategy = nullptr;
-    }
 }
 
 void ProcessingThread::stop() {
     QMutexLocker locker(&mutex); // Lock mutex for thread safety
     stopThread = true;
-    frameAvailable.wakeOne();  // Wake the thread if it's waiting for frames
+    frameAvailable.wakeAll();  // Wake the thread if it's waiting for frames
 }
 
 void ProcessingThread::enqueueFrame(const cv::Mat &frame) {
@@ -131,15 +120,24 @@ void ProcessingThread::run() {
     while (true) {
         cv::Mat frame;
         mutex.lock();
-        // Wait for new frame if queue is empty
-        if (frameQueue.isEmpty()) {
-            frameAvailable.wait(&mutex);
-        }
+
         // Exit loop if stop flag
         if (stopThread) {
             mutex.unlock();
             break;
         }
+
+        // Wait for new frame if queue is empty
+        if (frameQueue.isEmpty()) {
+            frameAvailable.wait(&mutex);
+        }
+
+        // Exit loop if stop flag
+        if (stopThread) {
+            mutex.unlock();
+            break;
+        }
+
         // Get next frame
         if (!frameQueue.isEmpty()) {
             frame = frameQueue.dequeue();
@@ -150,6 +148,28 @@ void ProcessingThread::run() {
             processFrame(frame);
         }
     }
+
+    // Clean up OpenGL resources before exiting the thread
+    if (glContext) {
+        if (offScreenSurface && glContext->isValid()) {
+            glContext->makeCurrent(offScreenSurface);
+            glContext->doneCurrent();
+        }
+        delete glContext;
+        glContext = nullptr;
+    }
+    if (offScreenSurface) {
+        delete offScreenSurface;
+        offScreenSurface = nullptr;
+    }
+
+    if (renderStrategy) {
+        delete renderStrategy;
+        renderStrategy = nullptr;
+    }
+
+
+
 }
 
 /**

@@ -48,6 +48,8 @@ private:
     QGroupBox* createPlayerPanel(const QString& color);
     std::unordered_map<QString, QGroupBox*> playerPanels;
 
+    void closeEvent(QCloseEvent* event) override;
+
 };
 
 

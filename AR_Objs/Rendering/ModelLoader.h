@@ -37,10 +37,10 @@ public:
      * @param name Name of the model to get
      * @return The data for the model
      */
-    ModelData* getModel(const std::string &name);
+    std::shared_ptr<ModelData> getModel(const std::string &name);
 
 private:
-    std::unordered_map<std::string, ModelData*> models;
+    std::unordered_map<std::string, std::shared_ptr<ModelData>> models;
 };
 
 
