@@ -10,12 +10,15 @@
 
 GUIView::GUIView(Controller* controller, QWidget* parent)
         : QWidget(parent), controller(controller) {
-    QVBoxLayout* mainLayout = new QVBoxLayout;
+    //QVBoxLayout* mainLayout = new QVBoxLayout;
+    QGridLayout* mainGridLayout = new QGridLayout;
+
 
     // Video
     videoLabel = new QLabel(this);
     videoLabel->setFixedSize(640, 480);
-    mainLayout->addWidget(videoLabel);
+    videoLabel->setAlignment(Qt::AlignCenter); // Center content
+    //mainLayout->addWidget(videoLabel, 0, Qt::AlignCenter); // Center label
 
     // Switch video source buttons and layout
     QHBoxLayout* videoButtonsLayout = new QHBoxLayout;
@@ -23,7 +26,7 @@ GUIView::GUIView(Controller* controller, QWidget* parent)
     QPushButton* networkButton = new QPushButton("Enter URL for Stream", this);
     videoButtonsLayout->addWidget(cameraButton);
     videoButtonsLayout->addWidget(networkButton);
-    mainLayout->addLayout(videoButtonsLayout);
+    //mainLayout->addLayout(videoButtonsLayout);
 
     // Connect buttons to controller slots for video
     connect(cameraButton, &QPushButton::clicked, controller, &Controller::switchToCamera);
@@ -40,12 +43,12 @@ GUIView::GUIView(Controller* controller, QWidget* parent)
     diceRollLabel = new QLabel("Dice Roll: ", this);
     diceLayout->addWidget(rollDiceButton);
     diceLayout->addWidget(diceRollLabel);
-    mainLayout->addLayout(diceLayout);
+    //mainLayout->addLayout(diceLayout);
     connect(rollDiceButton, &QPushButton::clicked, controller, &Controller::rollDice);
 
     // Finish game button
     finishGameButton = new QPushButton("Finish Game", this);
-    mainLayout->addWidget(finishGameButton);
+    //mainLayout->addWidget(finishGameButton);
 
     connect(finishGameButton, &QPushButton::clicked, controller, &Controller::finishGame);
 
@@ -59,7 +62,7 @@ GUIView::GUIView(Controller* controller, QWidget* parent)
         playersLayout->addWidget(playerPanel, 0, col++);
         playerPanels[color] = playerPanel;
     }
-    mainLayout->addLayout(playersLayout);
+   // mainLayout->addLayout(playersLayout);
 
 
     // Connect controllers signals to slots here in view
@@ -68,7 +71,15 @@ GUIView::GUIView(Controller* controller, QWidget* parent)
     connect(controller, &Controller::playerUpdated, this, &GUIView::updatePlayerInfo);
     connect(controller, &Controller::displayError, this, &GUIView::displayError);
 
-    setLayout(mainLayout);
+    //setLayout(mainLayout);
+
+    // Using grid layout instead
+    mainGridLayout->addWidget(videoLabel, 0, 0, 1, 2, Qt::AlignCenter);
+    mainGridLayout->addLayout(videoButtonsLayout, 1, 0, 1, 2, Qt::AlignCenter);
+    mainGridLayout->addLayout(diceLayout, 2, 0, 1, 2, Qt::AlignCenter);
+    mainGridLayout->addWidget(finishGameButton, 3, 0, 1, 2, Qt::AlignCenter);
+    mainGridLayout->addLayout(playersLayout, 4, 0, 1, 2);
+    setLayout(mainGridLayout);
 }
 
 GUIView::~GUIView() {
