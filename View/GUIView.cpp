@@ -6,29 +6,35 @@
 #include "GUIView.h"
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QFile>
 
 
 GUIView::GUIView(Controller* controller, QWidget* parent)
         : QWidget(parent), controller(controller) {
-    //QVBoxLayout* mainLayout = new QVBoxLayout;
-    QGridLayout* mainGridLayout = new QGridLayout;
+    // Default font
+    QFont defaultFont("Arial", 12);
+    QWidget::setFont(defaultFont);
 
+    // Main Grid Layout
+    QGridLayout* mainGridLayout = new QGridLayout;
 
     // Video
     videoLabel = new QLabel(this);
     videoLabel->setFixedSize(640, 480);
-    videoLabel->setAlignment(Qt::AlignCenter); // Center content
-    //mainLayout->addWidget(videoLabel, 0, Qt::AlignCenter); // Center label
+    videoLabel->setAlignment(Qt::AlignCenter);
+    // Add below back in maybe for a movie like border situation
+    //videoLabel->setStyleSheet("background-color: black; border: 1px solid #ccc;");
+    mainGridLayout->addWidget(videoLabel, 0, 0, 1, 2, Qt::AlignCenter);
 
-    // Switch video source buttons and layout
+    // Video Buttons
     QHBoxLayout* videoButtonsLayout = new QHBoxLayout;
     QPushButton* cameraButton = new QPushButton("Switch to Camera", this);
     QPushButton* networkButton = new QPushButton("Enter URL for Stream", this);
     videoButtonsLayout->addWidget(cameraButton);
     videoButtonsLayout->addWidget(networkButton);
-    //mainLayout->addLayout(videoButtonsLayout);
+    mainGridLayout->addLayout(videoButtonsLayout, 1, 0, 1, 2, Qt::AlignCenter);
 
-    // Connect buttons to controller slots for video
+    // Connect video buttons to controller
     connect(cameraButton, &QPushButton::clicked, controller, &Controller::switchToCamera);
     connect(networkButton, &QPushButton::clicked, [this]() {
         QString netURL = QInputDialog::getText(this, "Enter URL", "URL:");
@@ -37,18 +43,22 @@ GUIView::GUIView(Controller* controller, QWidget* parent)
         }
     });
 
-    // Rolling dice
+    // Dice rolls
     QHBoxLayout* diceLayout = new QHBoxLayout;
     rollDiceButton = new QPushButton("Roll Dice", this);
     diceRollLabel = new QLabel("Dice Roll: ", this);
+    diceRollLabel->setAlignment(Qt::AlignCenter);
+    diceRollLabel->setStyleSheet("font-size: 18px; font-weight: bold; color: #333;");
+    rollDiceButton->setIcon(QIcon("Styles/Icons/dice-solid.svg"));
     diceLayout->addWidget(rollDiceButton);
     diceLayout->addWidget(diceRollLabel);
-    //mainLayout->addLayout(diceLayout);
+    mainGridLayout->addLayout(diceLayout, 2, 0, 1, 2, Qt::AlignCenter);
+
     connect(rollDiceButton, &QPushButton::clicked, controller, &Controller::rollDice);
 
-    // Finish game button
+    // Finish game
     finishGameButton = new QPushButton("Finish Game", this);
-    //mainLayout->addWidget(finishGameButton);
+    mainGridLayout->addWidget(finishGameButton, 3, 0, 1, 2, Qt::AlignCenter);
 
     connect(finishGameButton, &QPushButton::clicked, controller, &Controller::finishGame);
 
@@ -62,24 +72,23 @@ GUIView::GUIView(Controller* controller, QWidget* parent)
         playersLayout->addWidget(playerPanel, 0, col++);
         playerPanels[color] = playerPanel;
     }
-   // mainLayout->addLayout(playersLayout);
+    mainGridLayout->addLayout(playersLayout, 4, 0, 1, 2);
 
+    // Main layout = the grid layout
+    setLayout(mainGridLayout);
 
-    // Connect controllers signals to slots here in view
+    // Add a simple style sheet
+    QFile styleFile(":/styles/stylesheet.qss");
+    if (styleFile.open(QFile::ReadOnly)) {
+        QString styleSheet = QLatin1String(styleFile.readAll());
+        this->setStyleSheet(styleSheet);
+    }
+
+    // Connect signals/slots
     connect(controller, &Controller::frameReady, this, &GUIView::updateVideoFeed);
     connect(controller, &Controller::diceRolled, this, &GUIView::updateDiceRoll);
     connect(controller, &Controller::playerUpdated, this, &GUIView::updatePlayerInfo);
     connect(controller, &Controller::displayError, this, &GUIView::displayError);
-
-    //setLayout(mainLayout);
-
-    // Using grid layout instead
-    mainGridLayout->addWidget(videoLabel, 0, 0, 1, 2, Qt::AlignCenter);
-    mainGridLayout->addLayout(videoButtonsLayout, 1, 0, 1, 2, Qt::AlignCenter);
-    mainGridLayout->addLayout(diceLayout, 2, 0, 1, 2, Qt::AlignCenter);
-    mainGridLayout->addWidget(finishGameButton, 3, 0, 1, 2, Qt::AlignCenter);
-    mainGridLayout->addLayout(playersLayout, 4, 0, 1, 2);
-    setLayout(mainGridLayout);
 }
 
 GUIView::~GUIView() {
@@ -99,30 +108,6 @@ void GUIView::updateDiceRoll(int roll) {
     diceRollLabel->setText(QString("Dice Roll: %1").arg(roll));
 }
 
-/*
-
-void GUIView::updatePlayerInfo(const QString& color, const Player& player) {
-    QGroupBox* panel = playerPanels[color];
-    if (panel) {
-        QLineEdit* usernameEdit = panel->findChild<QLineEdit*>("usernameEdit");
-        QLabel* scoreLabel = panel->findChild<QLabel*>("scoreLabel");
-        QLabel* statsLabel = panel->findChild<QLabel*>("statsLabel");
-
-        if (usernameEdit) {
-            usernameEdit->setText(QString::fromStdString(player.getUsername()));
-        }
-        if (scoreLabel) {
-            scoreLabel->setText(QString("Score: %1").arg(player.getScore()));
-        }
-        if (statsLabel) {
-            statsLabel->setText(QString("Wins: %1\nGames Played: %2\nAvg Score: %3")
-                                        .arg(player.getWins())
-                                        .arg(player.getGamesPlayed())
-                                        .arg(player.getAverageScore()));
-        }
-    }
-}
- */
 
 void GUIView::updatePlayerInfo(const QMap<QString, QVariant>& playerInfo) {
     QString color = playerInfo["color"].toString();
@@ -186,8 +171,28 @@ void GUIView::updatePlayerInfo(const QMap<QString, QVariant>& playerInfo) {
 QGroupBox* GUIView::createPlayerPanel(const QString& color) {
 
     QGroupBox* groupBox = new QGroupBox(color.toUpper() + " PLAYER", this);
-    //color.toLower();
     QVBoxLayout* vbox = new QVBoxLayout;
+
+    // Set background color based on player color
+    QString bgColor;
+    if (color.toLower() == "blue") bgColor = "#ADD8E6";
+    else if (color.toLower() == "red") bgColor = "#F08080";
+    else if (color.toLower() == "orange") bgColor = "#FFD580";
+    else if (color.toLower() == "white") bgColor = "#FFFFFF";
+
+    groupBox->setStyleSheet(QString(
+            "QGroupBox {"
+            "   background-color: %1;"
+            "   border: 1px solid gray;"
+            "   border-radius: 5px;"
+            "   margin-top: 10px;"
+            "}"
+            "QGroupBox::title {"
+            "   subcontrol-origin: margin;"
+            "   subcontrol-position: top center;"
+            "   padding: 0 3px;"
+            "}"
+    ).arg(bgColor));
 
     // Username
     QLineEdit* usernameEdit = new QLineEdit("guest", this);
