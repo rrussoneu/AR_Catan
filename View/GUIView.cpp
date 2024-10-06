@@ -188,7 +188,7 @@ QGroupBox* GUIView::createPlayerPanel(const QString& color) {
         iconLabel->setPixmap(iconPixmap.scaled(24, 24, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     } else {
         // Handle missing icon
-        iconLabel->setText("👤"); // Use generic
+        iconLabel->setText(":)"); // Use generic smiley
         iconLabel->setFont(QFont("Arial", 16));
     }
 

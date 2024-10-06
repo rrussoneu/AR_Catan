@@ -111,7 +111,9 @@ void Controller::getParams() {
 
 void Controller::processFrame(const cv::Mat &frame) {
     // Enqueue frame for processing
-    processingThread->enqueueFrame(frame);
+    if (processingThread) {
+        processingThread->enqueueFrame(frame);
+    }
 }
 
 void Controller::onFrameProcessed(const cv::Mat &frame) {
@@ -151,10 +153,18 @@ void Controller::handleError(const QString &message) {
 }
 
 void Controller::endProcessing() {
+    // Handle the two other threads
+
+    if (captureThread) {
+        captureThread->stop();  // Stop video thread
+        captureThread->wait();  // Wait for the thread to finish
+        delete captureThread; // Clean up
+        captureThread = nullptr;
+    }
     if (processingThread) {
+        processingThread->disconnect(); // Disconnect any signals
         processingThread->stop();  // Stop the processing thread
         processingThread->wait();  // Wait for the thread to finish
-
         delete processingThread;   // Clean up the thread
         processingThread = nullptr;
     }
