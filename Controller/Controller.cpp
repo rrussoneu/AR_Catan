@@ -13,16 +13,16 @@
 
 Controller::Controller(GameModel *model, QObject *parent)
         : QObject(parent), model(model), currentInput(nullptr), captureThread(nullptr),
-          cameraInput(new CameraInput()), rpInput(nullptr), processingThread(new ProcessingThread(model, this)) {
+          cameraInput(new CameraInput()), rpInput(nullptr), processingThread(std::make_unique<ProcessingThread>(model, nullptr)) {
     // Initialize players
     QStringList colors = {"blue", "red", "orange", "white"};
     for (const QString& color : colors) {
         model->addPlayer(color, Player());
     }
 
-    connect(processingThread, &ProcessingThread::frameProcessed, this, &Controller::onFrameProcessed);
+    connect(processingThread.get(), &ProcessingThread::frameProcessed, this, &Controller::onFrameProcessed);
     connect(model, &MessageEmitter::sendError, this, &Controller::handleError);
-    connect(processingThread, &ProcessingThread::errorOccurred, this, &Controller::handleError);
+    connect(processingThread.get(), &ProcessingThread::errorOccurred, this, &Controller::handleError);
     connect(&DatabaseManager::getInstance(), &MessageEmitter::sendError, this, &Controller::handleError);
 
     processingThread->start();
@@ -37,8 +37,8 @@ Controller::~Controller() {
     if (processingThread) {
         processingThread->stop();
         processingThread->wait();
-        delete processingThread;
-        processingThread = nullptr;
+        //delete processingThread;
+        //processingThread = nullptr;
     }
 }
 
@@ -46,8 +46,8 @@ void Controller::stopCurrentInput() {
     if (captureThread) {
         captureThread->stop();
         captureThread->wait();
-        delete captureThread;
-        captureThread = nullptr;
+        //delete captureThread;
+        //captureThread = nullptr;
     }
     if (currentInput) {
         currentInput->stopStream();
@@ -65,8 +65,8 @@ void Controller::switchToCamera() {
     }
 
     currentInput = cameraInput;
-    captureThread = new VideoCaptureThread(currentInput);
-    connect(captureThread, &VideoCaptureThread::frameCaptured, this, &Controller::processFrame);
+    captureThread = std::make_unique<VideoCaptureThread>(currentInput);
+    connect(captureThread.get(), &VideoCaptureThread::frameCaptured, this, &Controller::processFrame);
     captureThread->start();
 }
 
@@ -83,13 +83,13 @@ void Controller::switchToURL(const QString &rtspUrl) {
     rpInput = new NetworkInput(rtspUrl.toStdString());
 
     if (!rpInput->startStream()) {
-        emit handleError("RTSP connection failed.");
+        emit handleError("Remote video connection failed.");
         return;
     }
 
     currentInput = rpInput;
-    captureThread = new VideoCaptureThread(currentInput);
-    connect(captureThread, &VideoCaptureThread::frameCaptured, this, &Controller::processFrame);
+    captureThread = std::make_unique<VideoCaptureThread>(currentInput);
+    connect(captureThread.get(), &VideoCaptureThread::frameCaptured, this, &Controller::processFrame);
     captureThread->start();
 }
 
@@ -158,14 +158,14 @@ void Controller::endProcessing() {
     if (captureThread) {
         captureThread->stop();  // Stop video thread
         captureThread->wait();  // Wait for the thread to finish
-        delete captureThread; // Clean up
-        captureThread = nullptr;
+        //delete captureThread; // Clean up
+        //captureThread = nullptr;
     }
     if (processingThread) {
         processingThread->disconnect(); // Disconnect any signals
         processingThread->stop();  // Stop the processing thread
         processingThread->wait();  // Wait for the thread to finish
-        delete processingThread;   // Clean up the thread
-        processingThread = nullptr;
+        //delete processingThread;   // Clean up the thread
+        //processingThread = nullptr;
     }
 }

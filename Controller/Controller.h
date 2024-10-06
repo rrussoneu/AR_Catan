@@ -83,8 +83,8 @@ signals:
 private:
     GameModel *model;
     VideoInput *currentInput;  // Pointer for curr source
-    VideoCaptureThread *captureThread;
-    ProcessingThread *processingThread;
+    std::unique_ptr<VideoCaptureThread> captureThread;
+    std::unique_ptr<ProcessingThread> processingThread;
 
 
     CameraInput *cameraInput;  // Built in cam
