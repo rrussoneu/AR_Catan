@@ -37,8 +37,6 @@ Controller::~Controller() {
     if (processingThread) {
         processingThread->stop();
         processingThread->wait();
-        //delete processingThread;
-        //processingThread = nullptr;
     }
 }
 
@@ -46,8 +44,6 @@ void Controller::stopCurrentInput() {
     if (captureThread) {
         captureThread->stop();
         captureThread->wait();
-        //delete captureThread;
-        //captureThread = nullptr;
     }
     if (currentInput) {
         currentInput->stopStream();
@@ -158,14 +154,10 @@ void Controller::endProcessing() {
     if (captureThread) {
         captureThread->stop();  // Stop video thread
         captureThread->wait();  // Wait for the thread to finish
-        //delete captureThread; // Clean up
-        //captureThread = nullptr;
     }
     if (processingThread) {
         processingThread->disconnect(); // Disconnect any signals
         processingThread->stop();  // Stop the processing thread
         processingThread->wait();  // Wait for the thread to finish
-        //delete processingThread;   // Clean up the thread
-        //processingThread = nullptr;
     }
 }
