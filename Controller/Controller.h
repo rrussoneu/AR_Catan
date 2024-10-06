@@ -35,6 +35,7 @@ public:
     Controller(GameModel *model, QObject *parent = nullptr);
     ~Controller();
 
+    void endProcessing();
 
     // https://doc.qt.io/qt-6/signalsandslots.html Useful reference
 public slots:
@@ -53,8 +54,6 @@ public slots:
 
     // Slot for receiving error messages
     void handleError(const QString &message);
-
-    void endProcessing();
 
 
 

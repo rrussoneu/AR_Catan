@@ -7,6 +7,7 @@
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QFile>
+#include <QCloseEvent>
 
 
 GUIView::GUIView(Controller* controller, QWidget* parent)
@@ -29,7 +30,9 @@ GUIView::GUIView(Controller* controller, QWidget* parent)
     // Video Buttons
     QHBoxLayout* videoButtonsLayout = new QHBoxLayout;
     QPushButton* cameraButton = new QPushButton("Switch to Camera", this);
+    cameraButton->setIcon(QIcon("Styles/Icons/camera-solid.svg"));
     QPushButton* networkButton = new QPushButton("Enter URL for Stream", this);
+    networkButton->setIcon(QIcon("Styles/Icons/globe-solid.svg"));
     videoButtonsLayout->addWidget(cameraButton);
     videoButtonsLayout->addWidget(networkButton);
     mainGridLayout->addLayout(videoButtonsLayout, 1, 0, 1, 2, Qt::AlignCenter);
@@ -58,6 +61,7 @@ GUIView::GUIView(Controller* controller, QWidget* parent)
 
     // Finish game
     finishGameButton = new QPushButton("Finish Game", this);
+    finishGameButton->setIcon(QIcon("Styles/Icons/flag-checkered-solid.svg"));
     mainGridLayout->addWidget(finishGameButton, 3, 0, 1, 2, Qt::AlignCenter);
 
     connect(finishGameButton, &QPushButton::clicked, controller, &Controller::finishGame);
@@ -170,15 +174,46 @@ void GUIView::updatePlayerInfo(const QMap<QString, QVariant>& playerInfo) {
 
 QGroupBox* GUIView::createPlayerPanel(const QString& color) {
 
-    QGroupBox* groupBox = new QGroupBox(color.toUpper() + " PLAYER", this);
+    QGroupBox* groupBox = new QGroupBox(this);
     QVBoxLayout* vbox = new QVBoxLayout;
 
-    // Set background color based on player color
+    QHBoxLayout* headerLayout = new QHBoxLayout;
+
+    // Icon label
+    QLabel* iconLabel = new QLabel(this);
+    QString iconPath = QString("Styles/Icons/player-blue.svg"); // Add back .arg(color.toLower()) after figuring out best icons
+    QPixmap iconPixmap(iconPath);
+    if (!iconPixmap.isNull()) {
+        // Scale the icon
+        iconLabel->setPixmap(iconPixmap.scaled(24, 24, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    } else {
+        // Handle missing icon
+        iconLabel->setText("👤"); // Use generic
+        iconLabel->setFont(QFont("Arial", 16));
+    }
+
+    // Title
+    QLabel* titleLabel = new QLabel(QString("%1 PLAYER").arg(color.toUpper()), this);
+    QFont titleFont = titleLabel->font();
+    titleFont.setBold(true);
+    titleFont.setPointSize(12);
+    titleLabel->setFont(titleFont);
+
+    // Add icon and title to the header layout
+    headerLayout->addWidget(iconLabel);
+    headerLayout->addSpacing(8); // Space between icon and text
+    headerLayout->addWidget(titleLabel);
+    headerLayout->addStretch(); // Push content to the left
+
+    vbox->addLayout(headerLayout);
+
+    // Player color background color
     QString bgColor;
     if (color.toLower() == "blue") bgColor = "#ADD8E6";
     else if (color.toLower() == "red") bgColor = "#F08080";
     else if (color.toLower() == "orange") bgColor = "#FFD580";
     else if (color.toLower() == "white") bgColor = "#FFFFFF";
+    else bgColor = "#FFFFFF"; // Default color
 
     groupBox->setStyleSheet(QString(
             "QGroupBox {"
@@ -215,8 +250,23 @@ QGroupBox* GUIView::createPlayerPanel(const QString& color) {
     QLabel* scoreLabel = new QLabel("Score: 0", this);
     scoreLabel->setObjectName("scoreLabel");
     QPushButton* incrementButton = new QPushButton("+", this);
+
+    QString buttonStyle =
+            "QPushButton {"
+            "   background-color: #FF5722;"
+            "   color: white;"
+            "   padding: 4px 8px;"
+            "   border: none;"
+            "   border-radius: 3px;"
+            "   font-size: 16px;"
+            "}"
+            "QPushButton:hover {"
+            "   background-color: #E64A19;"
+            "}";
+    decrementButton->setStyleSheet(buttonStyle);
+    incrementButton->setStyleSheet(buttonStyle);
     scoreLayout->addWidget(decrementButton);
-    scoreLayout->addWidget(scoreLabel);
+    scoreLayout->addWidget(scoreLabel, 1, Qt::AlignCenter);
     scoreLayout->addWidget(incrementButton);
     vbox->addLayout(scoreLayout);
 
@@ -241,8 +291,17 @@ void GUIView::displayError(const QString &message) {
     QMessageBox::warning(this, "Error", message);
 }
 
-void GUIView::closeEvent(QCloseEvent* event) {
-
-    controller->endProcessing();
-    QWidget::closeEvent(event);  // Proceed with the normal close event
+// https://stackoverflow.com/questions/17480984/how-do-i-handle-the-event-of-the-user-pressing-the-x-close-button
+void GUIView::closeEvent(QCloseEvent *event) {
+    // Confirm before closing
+    QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Confirm Exit",
+                                                               tr("Are you sure you want to exit?\n"),
+                                                               QMessageBox::No | QMessageBox::Yes,
+                                                               QMessageBox::Yes);
+    if (resBtn != QMessageBox::Yes) {
+        event->ignore();
+    } else {
+        controller->endProcessing();
+        event->accept();
+    }
 }
