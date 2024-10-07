@@ -35,6 +35,9 @@ void ProcessingThread::stop() {
 
 void ProcessingThread::enqueueFrame(const cv::Mat &frame) {
     QMutexLocker locker(&mutex); // Need thread safe queue access
+    if (stopThread) {
+        return;  // Ignore frames if thread is stopping
+    }
     const int MAX_QUEUE_SIZE = 5; // Adjust as needed - five seems to be good for now
     if (frameQueue.size() < MAX_QUEUE_SIZE) {
         // Add a copy of the frame and notify thread avaiable

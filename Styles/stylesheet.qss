@@ -1,0 +1,40 @@
+QWidget {
+    background-color: #f0f0f0;
+}
+
+QLabel {
+    font-size: 14px;
+}
+
+QPushButton {
+    background-color: #4CAF50;
+    color: white;
+    padding: 6px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+QPushButton:hover {
+    background-color: #45a049;
+}
+
+QLineEdit {
+    padding: 4px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+QGroupBox {
+    border: 1px solid gray;
+    border-radius: 5px;
+    margin-top: 10px;
+    background-color: #ffffff;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top center;
+    padding: 0 3px;
+    color: #333;
+}
