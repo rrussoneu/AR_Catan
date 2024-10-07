@@ -13,12 +13,12 @@
 int main() {
 
     // CV bord init
-    cv::aruco::Dictionary dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_250);
-    cv::aruco::CharucoBoard board = cv::aruco::CharucoBoard(cv::Size(5, 7), 0.04, 0.02, dictionary);
+    cv::aruco::Dictionary dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_4X4_1000);
+    cv::aruco::CharucoBoard board = cv::aruco::CharucoBoard(cv::Size(10, 14), 0.05, 0.03, dictionary); // 10x14 grid, 5cm square size, 3cm marker size
 
     // Create image of board
     cv::Mat boardImage;
-    board.generateImage(cv::Size(600, 500), boardImage, 10, 1);
+    board.generateImage(cv::Size(1000, 800), boardImage, 10, 1);
 
     // Save board
     std::string bs;
