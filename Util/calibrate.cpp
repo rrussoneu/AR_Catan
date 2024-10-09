@@ -57,8 +57,10 @@ int main(int argc, char *argv[]) {
 
 
     // Board creation
-    cv::aruco::Dictionary dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_250);
-    cv::aruco::CharucoBoard board = cv::aruco::CharucoBoard(cv::Size(5, 7), 0.0285f, 0.014f, dictionary);
+    //cv::aruco::Dictionary dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_250);
+    //cv::aruco::CharucoBoard board = cv::aruco::CharucoBoard(cv::Size(5, 7), 0.0285f, 0.014f, dictionary);
+    cv::aruco::Dictionary dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_4X4_1000);
+    cv::aruco::CharucoBoard board = cv::aruco::CharucoBoard(cv::Size(10, 14), 0.05, 0.03, dictionary); // 10x14 grid, 5cm square size, 3cm marker size
     cv::aruco::CharucoDetector detector = cv::aruco::CharucoDetector(board);
 
 
@@ -155,7 +157,7 @@ int main(int argc, char *argv[]) {
             }
         }
         std::cout << "Reprojection error: " << repError << "\n";
-        cv::FileStorage fs("camera_calibration_setting.xml", cv::FileStorage::WRITE);
+        cv::FileStorage fs(argv[1], cv::FileStorage::WRITE);
         if (!fs.isOpened()) {
             return -1;
         }

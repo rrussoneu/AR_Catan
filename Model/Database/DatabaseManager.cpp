@@ -81,7 +81,7 @@ bool DatabaseManager::getPlayerStats(Player &player) {
         player.setTotalScore(query.value("totalScore").toInt());
         return true; // Player exists
     } else {
-        emit sendError("Player not found / query failed in getting stats");
+        emit sendError("Player not found. Adding as new player");
         return false; // Player does not exist
     }
 
