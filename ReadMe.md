@@ -29,13 +29,13 @@ This project greatly expands upon my original AR Catan, which you can check out 
 A full set of images for AR objects and demo is coming soon, so please stay tuned, but for now here are a couple images from development!
 
 Knight:
-![Knight](knight.png)
+<img src="knight.png" alt="knight" width="200"/>
 
 Wool:
-![Wool](wool.png)
+<img src="wool.png" alt="wool" width="200"/>
 
 Ore:
-![Ore](ore.png)
+<img src="ore.png" alt="ore" width="200"/>
 
 ## Usage
 While I plan to soon add downloadable versions for Mac and Windows with streamlined setup, for now, please start by cloning this repository and installing the listed dependencies to check out the app. Before running the main file, you'll need to:
