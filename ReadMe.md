@@ -16,6 +16,7 @@
 Welcome! This project uses libraries like OpenCV and OpenGL to create an AR experience for the board game Settlers of Catan. It's built using the Model-View-Controller (MVC) architecture and following OOP principles to ensure a robust, expandable design. The result is a full stack application, connected to a SQLite database for historical game/player data and using Qt6 for the GUI. The GUI displays video with AR overlays, and you can use cameras built in or connected to your computer, or connect to a video stream via a URL (for example, I like to use a Raspberry Pi with a camera, set it above my table, and stream video from there). This can both be used for a fun way to keep track of games between friends, or when you'd want to have a more exciting way to watch live Catan gameplay. 
 
 This project greatly expands upon my original AR Catan, which you can check out [here](https://github.com/rrussoneu/Catan_AR_Game). The original version simply rendered Catan AR objects in a window using OpenCV, and I think looking back at the first iteration provides a nice example of going from "working" to a full application.
+
 ## Features
 
 - **Real-Time Video Input**: Capture and display video feeds from various sources using OpenCV
@@ -24,6 +25,17 @@ This project greatly expands upon my original AR Catan, which you can check out 
 - **Interactive GUI**: GUI with score displays, historical player stats, dice rolling, and camera switching
 - **Database Integration**: Historical player/game data saved and retrieved using SQLite
 - **Camera Calibration and Marker Generation Utils**: Scripts are also included for camera calibration and marker generation
+
+A full set of images for AR objects and demo is coming soon, so please stay tuned, but for now here are a couple images from development!
+
+Knight:
+![Knight](knight.png)
+
+Wool:
+![Wool](wool.png)
+
+Ore:
+![Ore](ore.png)
 
 ## Usage
 While I plan to soon add downloadable versions for Mac and Windows with streamlined setup, for now, please start by cloning this repository and installing the listed dependencies to check out the app. Before running the main file, you'll need to:
