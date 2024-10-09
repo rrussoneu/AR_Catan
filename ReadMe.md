@@ -29,12 +29,15 @@ This project greatly expands upon my original AR Catan, which you can check out 
 A full set of images for AR objects and demo is coming soon, so please stay tuned, but for now here are a couple images from development!
 
 Knight:
+
 <img src="knight.png" alt="knight" width="200"/>
 
 Wool:
+
 <img src="wool.png" alt="wool" width="200"/>
 
 Ore:
+
 <img src="ore.png" alt="ore" width="200"/>
 
 ## Usage
