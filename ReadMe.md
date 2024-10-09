@@ -25,6 +25,17 @@ This project greatly expands upon my original AR Catan, which you can check out 
 - **Database Integration**: Historical player/game data saved and retrieved using SQLite
 - **Camera Calibration and Marker Generation Utils**: Scripts are also included for camera calibration and marker generation
 
+A full set of images for AR objects and demo is coming soon, so please stay tuned, but for now here are a couple images from development!
+
+Knight:
+![Knight](Res/knight.png)
+
+Wool:
+![Wool](Res/wool.png)
+
+Ore:
+![Ore](Res/ore.png)
+
 ## Usage
 While I plan to soon add downloadable versions for Mac and Windows with streamlined setup, for now, please start by cloning this repository and installing the listed dependencies to check out the app. Before running the main file, you'll need to:
     
